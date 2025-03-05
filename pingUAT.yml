@@ -1,7 +1,7 @@
 ---
 - name: win_ping
   hosts: all
-  hosts: "{{ variable_host }}"
+  #hosts: "{{ variable_host }}"
   become: false
   gather_facts: false
   tasks:
