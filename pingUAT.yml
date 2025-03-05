@@ -6,26 +6,22 @@
   vars:
     target_ip: "{{ survey_ip }}"  
     remote_ip: "10.100.{{ target_ip }}.207"
-    remote_path: "\\{{ remote_ip }}\\AdvanceRetail\\EXE\\Plugins"
+    remote_path: "\\\\{{ remote_ip }}\\AdvanceRetail\\EXE\\Plugins\\DymocksBooklover"
     local_plugins_path: "C:\\Program Files (x86)\\AdvanceRetail\\EXE\\Plugins"
     local_script_path: "C:\\ARFiles\\UpgradeMay2024\\killprocess.ps1"
 
   tasks:
-    - name: Install AWS CLI using Chocolatey (if not already installed)
-      win_chocolatey:
-        name: awscli
-        state: present
+    - name: Run killprocess PowerShell script
+      ansible.windows.win_powershell:
+        script: "{{ local_script_path }}"
 
-    - name: Run PowerShell script from local machine
-      ansible.windows.win_shell: >
-        powershell.exe -ExecutionPolicy Bypass -File "{{ local_script_path }}"
+    - name: Rename existing DymocksBooklover folder if it exists
+      ansible.windows.win_powershell:
+        script: |
+          if (Test-Path "{{ local_plugins_path }}\\DymocksBooklover") {
+            Rename-Item -Path "{{ local_plugins_path }}\\DymocksBooklover" -NewName "DymocksBooklover_old" -Force
+          }
 
-    - name: Rename existing loyalty folder if it exists
-      ansible.windows.win_shell: >
-        if (Test-Path '{{ local_plugins_path }}\\DymocksBooklover') {
-          Rename-Item -Path '{{ local_plugins_path }}\\DymocksBooklover' -NewName 'DymocksBooklover_old' -Force
-        }
-
-    - name: Copy loyalty folder from remote machine to local machine
-      ansible.windows.win_shell: >
-        robocopy '{{ remote_path }}' '{{ local_plugins_path }}\\DymocksBooklover' /E /NFL /NDL /NP /R:3 /W:5
+    - name: Copy DymocksBooklover folder from remote machine to local machine
+      ansible.windows.win_shell: |
+        robocopy "{{ remote_path }}" "{{ local_plugins_path }}\\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
