@@ -9,8 +9,7 @@
 
   tasks:
   - name: Run local script
-    win_shell:
-      script: "{{ local_script_path }}"
+    win_shell: "{{ local_script_path }}"
   - name: Display target IP
     debug:
       msg: "Pinging target: {{ survey_ip }}"
