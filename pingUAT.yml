@@ -25,3 +25,9 @@
     - name: Copy DymocksBooklover folder from remote machine to local machine
       ansible.windows.win_shell: |
         robocopy "{{ remote_path }}" "{{ local_plugins_path }}\\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+    become: True
+    become_method: runas
+    become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+    vars:
+      ansible_become_user: "{{ username }}"
+      ansible_become_pass: "{{ password }}"
