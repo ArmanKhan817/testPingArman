@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  gather_facts: false
   vars:
     target_ip: "{{ survey_ip }}"  
     remote_ip: "10.100.{{ target_ip }}.207"
@@ -12,5 +13,5 @@
     win_shell:
       script: "{{ local_script_path }}"
   - name: Display target IP
-      debug:
-        msg: "Pinging target: {{ survey_ip }}"
+    debug:
+      msg: "Pinging target: {{ survey_ip }}"
