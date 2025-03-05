@@ -1,7 +1,7 @@
 ---
 - name: Run PowerShell script, rename folder, and copy files
   hosts: all
-  gather_facts: false
+  gather_facts: false  # Avoids unnecessary Linux fact gathering
 
   vars:
     remote_ip: "10.100.{{ target_ip }}.207"
