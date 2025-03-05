@@ -1,11 +1,13 @@
 ---
 - hosts: all
   tasks:
-  - name: Run local script
-    win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
-  - name: Display target IP
-    debug:
-      msg: "Pinging target: {{ survey_ip }}"
+  #- name: Run local script 
+    #win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
+  - name: copy  files
+    copy:
+      src: \\10.100.{{ survey_ip }}.207\ARFiles\UpgradeMay2024\upgradeApplicationSOR.ps1
+      dest: C:\ARFiles\UpgradeMay2024\upgradeApplicationSOR.ps1
+      remote_src: yes
   gather_facts: yes
   become: True
   become_method: runas
