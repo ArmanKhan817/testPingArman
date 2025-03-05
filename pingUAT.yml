@@ -1,11 +1,14 @@
 ---
 - name: win_ping
   hosts: all
-  #hosts: "{{ variable_host }}"
   become: false
   gather_facts: false
+
   tasks:
-     - name: test ping
-       ansible.windows.win_ping:
-       #delegate_to: "{{ variable_host }}"
-       #delegate_facts: true
+    - name: Display target IP
+      debug:
+        msg: "Pinging target: {{ target_host }}"
+
+    - name: Test ping
+      ansible.windows.win_ping:
+      delegate_to: "{{ target_host }}"
