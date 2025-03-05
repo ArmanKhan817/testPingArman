@@ -1,6 +1,6 @@
 ---
 - name: win_ping
-  #hosts: all
+  hosts: all
   hosts: "{{ variable_host }}"
   become: false
   gather_facts: false
