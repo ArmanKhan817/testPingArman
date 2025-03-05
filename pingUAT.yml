@@ -6,7 +6,7 @@
 
   vars:
     remote_ip: "10.100.{{ target_ip }}.207"
-    remote_path: "\\{{ remote_ip }}\AdvanceRetail\EXE\Plugins"
+    remote_path: "\\{{ remote_ip }}\\AdvanceRetail\\EXE\Plugins"
     local_plugins_path: "C:\\Program Files (x86)\\AdvanceRetail\\EXE\\Plugins"
     local_script_path: "C:\\ARFiles\\UpgradeMay2024\\killprocess.ps1"
 
