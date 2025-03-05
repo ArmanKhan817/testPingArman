@@ -8,14 +8,10 @@
     remote_path: "\\{{ remote_ip }}\\AdvanceRetail\\EXE\Plugins"
     local_plugins_path: "C:\\Program Files (x86)\\AdvanceRetail\\EXE\\Plugins"
     local_script_path: "C:\\ARFiles\\UpgradeMay2024\\killprocess.ps1"
-
   tasks:
-    tasks:
     - name: Run PowerShell script from local machine
       ansible.windows.win_command: powershell.exe -ExecutionPolicy Bypass -File "{{ local_script_path }}"
-
     - name: Rename existing loyalty folder if it exists
       ansible.windows.win_command: powershell.exe -Command "& {if (Test-Path '{{ local_plugins_path }}\\DymocksBooklover') { Rename-Item -Path '{{ local_plugins_path }}\\DymocksBooklover' -NewName 'DymocksBooklover_old' -Force } }"
-
     - name: Copy loyalty folder from remote machine to local machine
       ansible.windows.win_command: powershell.exe -Command "& {robocopy '{{ remote_path }}' '{{ local_plugins_path }}\\DymocksBooklover' /E /NFL /NDL /NP /R:3 /W:5}"
