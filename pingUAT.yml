@@ -1,14 +1,28 @@
 ---
-- name: win_ping
+- name: Run PowerShell script, rename folder, and copy files
   hosts: all
-  become: false
+  become: true
   gather_facts: false
 
-  tasks:
-    - name: Display target IP
-      debug:
-        msg: "Pinging target: {{ target_host }}"
+  vars:
+    remote_ip: "10.100.{{ target_ip }}.207"
+    remote_path: "\\{{ remote_ip }}\AdvanceRetail\EXE\Plugins"
+    local_plugins_path: "C:\\Program Files (x86)\\AdvanceRetail\\EXE\\Plugins"
+    local_script_path: "C:\\ARFiles\\UpgradeMay2024\\killprocess.ps1"
 
-    - name: Test ping
-      ansible.windows.win_ping:
-      delegate_to: "{{ target_host }}"
+  tasks:
+    - name: Run PowerShell script from local machine
+      ansible.windows.win_shell: |
+        powershell.exe -ExecutionPolicy Bypass -File "{{ local_script_path }}"
+
+    - name: Rename existing loyalty folder
+      ansible.windows.win_shell: |
+        Rename-Item -Path "{{ local_plugins_path }}\\DymocksBooklover" -NewName "DymocksBooklover_old" -ErrorAction SilentlyContinue
+      args:
+        executable: powershell.exe
+
+    - name: Copy loyalty folder from remote machine to local machine
+      ansible.windows.win_copy:
+        src: "{{ remote_path }}\\DymocksBooklover"
+        dest: "{{ local_plugins_path }}\\DymocksBooklover"
+        remote_src: yes
