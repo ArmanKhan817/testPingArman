@@ -1,15 +1,8 @@
 ---
 - hosts: all
-  vars:
-    target_ip: "{{ survey_ip }}"  
-    remote_ip: "10.100.{{ target_ip }}.207"
-    remote_path: "\\\\{{ remote_ip }}\\AdvanceRetail\\EXE\\Plugins\\DymocksBooklover"
-    local_plugins_path: "C:\\Program Files (x86)\\AdvanceRetail\\EXE\\Plugins"
-    local_script_path: "C:\\ARFiles\\UpgradeMay2024\\killprocess.ps1"
-
   tasks:
   - name: Run local script
-    win_shell: "{{ local_script_path }}"
+    win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
   - name: Display target IP
     debug:
       msg: "Pinging target: {{ survey_ip }}"
