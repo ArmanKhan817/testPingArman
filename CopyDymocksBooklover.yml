@@ -8,8 +8,7 @@
   tasks:
     - name: Run local script to stop process (POS)
       win_shell: |
-        powershell.exe -ExecutionPolicy Bypass Stop-Process -Name "POS" -Confirm:$false -Force
-
+        powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name 'POS' -Confirm:$false -Force"
     - name: Rename existing DymocksBooklover folder if it exists
       win_shell: |
         if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
