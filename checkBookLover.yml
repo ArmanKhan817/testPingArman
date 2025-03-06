@@ -13,7 +13,7 @@
           $formattedDate = $lastModified.ToString("yyyy-MM-dd HH:mm:ss")
           $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
           if ($lastModified -lt (Get-Date)) {
-            Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied"
+            Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied New DymocksBooklover"
           } else {
             Write-Output "Last Modified Date: $formattedDate - ❌ Copy Failed"
           }
