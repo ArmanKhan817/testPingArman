@@ -6,9 +6,8 @@
     ansible_become_pass: "{{ password }}"
 
   tasks:
-    - name: Run local script to stop process (POS)
-      win_shell: |
-        -ExecutionPolicy Bypass -Command "Stop-Process -Name 'POS' -Confirm:$false -Force"
+    - name: Stop process (POS)
+      win_command: powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name 'POS' -Confirm:$false -Force"
     - name: Rename existing DymocksBooklover folder if it exists
       win_shell: |
         if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
