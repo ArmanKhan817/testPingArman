@@ -14,7 +14,7 @@
           $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
           # Retrieve the first IPv4 address of the machine
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
-          if ($lastModified -lt (Get-Date)) {
+          if ($formattedDate -lt (Get-Date)) {
             Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied from IP: $ipAddress"
           } else {
             Write-Output "Last Modified Date: $formattedDate - ❌ Copy Failed from IP: $ipAddress"
