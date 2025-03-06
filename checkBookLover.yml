@@ -12,7 +12,8 @@
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd HH:mm:ss")
           $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
-          $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -eq 'Ethernet'}).IPAddress
+          # Retrieve the first IPv4 address of the machine
+          $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           if ($lastModified -lt (Get-Date)) {
             Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied from IP: $ipAddress"
           } else {
@@ -23,6 +24,7 @@
         }
       register: booklover_modified_date
       changed_when: false
+
     - name: Display last modified date and status with IP
       ansible.builtin.debug:
         msg: "{{ booklover_modified_date.stdout | default('Folder not found!') }}"
