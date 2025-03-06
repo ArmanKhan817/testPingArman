@@ -1,0 +1,25 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Get last modified date of DymocksBooklover folder
+      win_shell: |
+        $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover"
+        if (Test-Path $folder) {
+          (Get-Item $folder).LastWriteTime
+        } else {
+          Write-Output "Folder not found!"
+        }
+      register: booklover_modified_date
+      changed_when: false
+
+    - name: Display last modified date
+      ansible.builtin.debug:
+        msg: "DymocksBooklover Last Modified Date: {{ booklover_modified_date.stdout | default('Folder not found!') }}"
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
