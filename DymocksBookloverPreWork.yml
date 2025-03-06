@@ -1,0 +1,24 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Rename existing DymocksBooklover folder if it exists
+      win_shell: |
+        if (Test-Path "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover") {
+          Rename-Item -Path "ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover_March2025" -Force
+        }
+    - name: Copy DymocksBooklover folder from remote machine to local machine
+      win_command: |
+        robocopy "\\10.250.20.200\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+      register: robocopy_result
+      ignore_errors: yes
+    - name: Show robocopy output
+      ansible.builtin.debug:
+        var: robocopy_result.stdout_lines
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
