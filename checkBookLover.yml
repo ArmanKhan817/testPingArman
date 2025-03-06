@@ -1,9 +1,9 @@
----
 - hosts: all
   gather_facts: yes
   vars:
     ansible_become_user: "{{ username }}"
     ansible_become_pass: "{{ password }}"
+
   tasks:
     - name: Get last modified date of DymocksBooklover folder
       win_shell: |
@@ -12,10 +12,11 @@
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd HH:mm:ss")
           $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+          $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           if ($lastModified -lt (Get-Date)) {
-            Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied New DymocksBooklover"
+            Write-Output "Last Modified Date: $formattedDate - ✅ Successfully Copied New BookLover from IP: $ipAddress"
           } else {
-            Write-Output "Last Modified Date: $formattedDate - ❌ Copy Failed"
+            Write-Output "Last Modified Date: $formattedDate - ❌ Copy Failed from IP: $ipAddress"
           }
         } else {
           Write-Output "Folder not found!"
@@ -23,9 +24,6 @@
       register: booklover_modified_date
       changed_when: false
 
-    - name: Display last modified date and status with IP
+    - name: Show folder modification status
       ansible.builtin.debug:
-        msg: "{{ booklover_modified_date.stdout | default('Folder not found!') }}"
-  become: yes
-  become_method: runas
-  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+        var: booklover_modified_date.msg
