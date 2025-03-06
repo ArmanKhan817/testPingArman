@@ -9,7 +9,7 @@
       win_shell: |
         $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover"
         if (Test-Path $folder) {
-          $lastModified = (Get-Item $folder).LastWriteTime
+          $lastModified = [datetime]::ParseExact($lastModified, 'yyyy-MM-dd HH:mm:ss', $null)
           $formattedDate = $lastModified.ToString("yyyy-MM-dd HH:mm:ss")
           $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
           # Retrieve the first IPv4 address of the machine
