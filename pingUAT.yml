@@ -5,7 +5,7 @@
     #win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
     
   - name: Rename existing DymocksBooklover folder if it exists
-    win_powershell:
+    win_shell:
         script: |
           if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
             Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" -NewName "DymocksBooklover_old" -Force
