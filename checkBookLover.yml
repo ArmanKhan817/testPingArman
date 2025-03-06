@@ -10,8 +10,8 @@
         $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover"
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
-          $formattedDate = $lastModified.ToString("yyyy-MM-dd HH:mm:ss")
-          $today = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+          $formattedDate = $lastModified.ToString("yyyy-MM-dd")
+          $today = (Get-Date).ToString("yyyy-MM-dd")
           # Retrieve the first IPv4 address of the machine
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           if ($formattedDate -lt (Get-Date)) {
