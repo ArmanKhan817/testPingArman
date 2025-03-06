@@ -1,0 +1,33 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Stop process (POS)
+      win_command: powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name 'POS' -Confirm:$false -Force"
+    - name: Rename existing DymocksBooklover folder if it exists
+      win_shell: |
+        if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
+          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover_March2025" -Force
+        }
+
+    - name: Ensure renamed folder exists before proceeding
+      ansible.builtin.pause:
+        seconds: 2
+
+    - name: Copy DymocksBooklover folder from remote machine to local machine
+      win_command: |
+        robocopy "\\10.100.{{ survey_ip }}.207\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+      register: robocopy_result
+      ignore_errors: yes
+
+    - name: Show robocopy output
+      ansible.builtin.debug:
+        var: robocopy_result.stdout_lines
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
