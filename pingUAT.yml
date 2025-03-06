@@ -1,15 +1,36 @@
 ---
 - hosts: all
+  tasks:---
+- hosts: all
   tasks:
+  - name: Run local script 
+    win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
+
+  - name: Rename existing DymocksBooklover folder if it exists
+    win_shell: if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" -NewName "DymocksBooklover_March2025" -Force}
+   #- name: Copy DymocksBooklover folder from remote machine to local machine
+    #win_shell: robocopy "\\10.100.{{ survey_ip }}.207\AdvanceRetail\EXE\Plugins\DymocksBooklover" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+    #register: robocopy_result
+    #ignore_errors: yes
+  #- name: Show robocopy output
+    #debug:
+      #var: robocopy_result.stdout_lines
+  gather_facts: yes
+  become: True
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
   #- name: Run local script 
     #win_shell: 'C:\ARFiles\UpgradeMay2024\killprocess.ps1'
     
   - name: Rename existing DymocksBooklover folder if it exists
-    win_shell:
-        script: |
-          if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
-            Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" -NewName "DymocksBooklover_old" -Force
-          }
+    win_shell: |
+    if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover") {
+      Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" -NewName "DymocksBooklover_old" -Force
+    }
+        
   #- name: Copy DymocksBooklover folder from remote machine to local machine
     #win_shell: robocopy "\\10.100.{{ survey_ip }}.207\AdvanceRetail\EXE\Plugins\DymocksBooklover" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
     #register: robocopy_result
