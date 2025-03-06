@@ -8,7 +8,7 @@
   tasks:
     - name: Run local script
       win_shell: |
-        powershell.exe -ExecutionPolicy Bypass -File "C:\ARFiles\UpgradeMay2024\killprocess.ps1"
+        powershell.exe -ExecutionPolicy Bypass Stop-Process -Name "POS" -Confirm:$false -Force
 
     - name: Rename existing DymocksBooklover folder if it exists
       win_shell: |
@@ -22,7 +22,7 @@
 
     - name: Copy DymocksBooklover folder from remote machine to local machine
       win_command: |
-        robocopy "\\10.100.{{ survey_ip }}.207\AdvanceRetail\EXE\Plugins\DymocksBooklover" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "\\10.100.{{ survey_ip }}.207\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
 
