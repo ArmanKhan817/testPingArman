@@ -13,11 +13,11 @@
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
           $today = (Get-Date).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
-          $hOs= get-content env:computername
+          
           if ($formattedDate -ge $today) {
-            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $hOs: $ipAddress"
+            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $ipAddress"
           } else {
-            Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $hOs: $ipAddress"
+            Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $ipAddress"
           }
         } else {
           Write-Output "Folder not found!"
