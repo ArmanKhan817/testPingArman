@@ -23,6 +23,7 @@
           Write-Output "Folder not found!"
         }
       register: booklover_modified_date
+      ignore_errors: yes
       changed_when: false
 
     - name: Show folder modification status
