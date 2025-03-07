@@ -8,19 +8,19 @@
     - name: Get last modified date of DymocksBooklover folder
       win_shell: |
         $folder = "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover"
+        $hostname = $env:COMPUTERNAME
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
           $today = (Get-Date).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
-          $hostname = $env:COMPUTERNAME
           if ($formattedDate -ge $today) {
             Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $hostname IP: $ipAddress"
           } else {
             Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $hostname IP: $ipAddress"
           }
         } else {
-          Write-Output "Folder not found!"
+          Write-Output "Folder not found in $hostname"
         }
       register: booklover_modified_date
       ignore_errors: yes
