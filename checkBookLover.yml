@@ -13,7 +13,7 @@
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
           $today = (Get-Date).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
-          $hostname= hostname
+          $hostname= get-content env:computername
           if ($formattedDate -ge $today) {
             Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $hostname: $ipAddress"
           } else {
