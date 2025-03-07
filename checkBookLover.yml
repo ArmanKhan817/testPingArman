@@ -13,9 +13,9 @@
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
           $today = (Get-Date).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
-          
+          $name =  echo $HOSTNAME
           if ($formattedDate -ge $today) {
-            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $ipAddress"
+            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied $name in $ipAddress"
           } else {
             Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $ipAddress"
           }
