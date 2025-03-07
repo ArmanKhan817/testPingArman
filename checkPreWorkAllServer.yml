@@ -1,0 +1,34 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Get last modified date of DymocksBooklover folder
+      win_shell: |
+        $folder = "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover"
+        if (Test-Path $folder) {
+          $lastModified = (Get-Item $folder).LastWriteTime
+          $formattedDate = $lastModified.ToString("yyyy-MM-dd")
+          $today = (Get-Date).ToString("yyyy-MM-dd")
+          $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
+          $hostname = $env:COMPUTERNAME
+          if ($formattedDate -ge $today) {
+            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $hostname IP: $ipAddress"
+          } else {
+            Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $hostname IP: $ipAddress"
+          }
+        } else {
+          Write-Output "Folder not found!"
+        }
+      register: booklover_modified_date
+      changed_when: false
+
+    - name: Show folder modification status
+      ansible.builtin.debug:
+        var: booklover_modified_date.stdout
+      when: booklover_modified_date.stdout is defined
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
