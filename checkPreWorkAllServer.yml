@@ -20,7 +20,7 @@
             Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $hostname IP: $ipAddress"
           }
         } else {
-          Write-Output "Folder not found in $hostname"
+          Write-Output "DymocksBooklover Folder not found in ARFiles location in $hostname. Please copy the file"
         }
       register: booklover_modified_date
       ignore_errors: yes
