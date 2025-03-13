@@ -6,9 +6,9 @@
   tasks:
     - name: create upgrade folder
       win_command: >-
-        powershell.exe if "(test-Path -Path C:\ARFiles\Application
-        Updates\Plugins) {exit} else {New-Item -Path C:\ARFiles\Application
-        Updates\Plugins -ItemType Directory}"
+        powershell.exe if "(test-Path -Path "C:\ARFiles\Application
+        Updates\Plugins") {exit} else {New-Item -Path "C:\ARFiles\Application
+        Updates\Plugins" -ItemType Directory}"
     - name: Get last modified date of DymocksBooklover folder
       win_shell: |
         $folder = "C:\ARFiles\Application Updates\Plugins"
