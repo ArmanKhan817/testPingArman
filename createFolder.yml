@@ -1,4 +1,8 @@
 - hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
   tasks:
     - name: create upgrade folder
       win_command: >-
