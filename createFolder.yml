@@ -1,12 +1,14 @@
 - hosts: all
-  gather_facts: yes
+  gather_facts: 'yes'
   vars:
-    ansible_become_user: "{{ username }}"
-    ansible_become_pass: "{{ password }}"
+    ansible_become_user: '{{ username }}'
+    ansible_become_pass: '{{ password }}'
   tasks:
     - name: create upgrade folder
       win_command: >-
-        powershell.exe -ExecutionPolicy Bypass -Command "if (Test-Path -Path 'C:\ARFiles\ApplicationUpdates\Plugins') {exit} else {New-Item -Path 'C:\ARFiles\ApplicationUpdates\Plugins' -ItemType Directory}"
+        powershell.exe -ExecutionPolicy Bypass -Command "if (Test-Path -Path
+        'C:\ARFiles\ApplicationUpdates\Plugins') {exit} else {New-Item -Path
+        'C:\ARFiles\ApplicationUpdates\Plugins' -ItemType Directory}"
     - name: Get last modified date of DymocksBooklover folder
       win_shell: |
         $folder = "C:\ARFiles\Application Updates\Plugins"
@@ -24,9 +26,13 @@
         } else {
           Write-Output " ❌ C:\ARFiles\Application Updates\Plugins exist not found in ARFiles location in $hostname. Please create the file"
         }
-      register: booklover_modified_date
+      register: applicationUpdates
       ignore_errors: 'yes'
       changed_when: false
+    - name: Show folder modification status
+      ansible.builtin.debug:
+        var: applicationUpdates.stdout
+      when: applicationUpdates.stdout is defined
   become: 'yes'
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
