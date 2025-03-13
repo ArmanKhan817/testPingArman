@@ -9,9 +9,9 @@
         powershell.exe -ExecutionPolicy Bypass -Command "if (Test-Path -Path
         'C:\ARFiles\ApplicationUpdates\Plugins') {exit} else {New-Item -Path
         'C:\ARFiles\ApplicationUpdates\Plugins' -ItemType Directory}"
-    - name: Get last modified date of DymocksBooklover folder
+    - name: Get last modified date of ApplicationUpdates folder
       win_shell: |
-        $folder = "C:\ARFiles\Application Updates\Plugins"
+        $folder = "C:\ARFiles\ApplicationUpdates\Plugins"
         $hostname = $env:COMPUTERNAME
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
@@ -24,7 +24,7 @@
             Write-Output "Last Modified Date: $formattedDate - ❌ C:\ARFiles\ApplicationUpdates\Plugins exist in $hostname IP: $ipAddress"
           }
         } else {
-          Write-Output " ❌ C:\ARFiles\Application Updates\Plugins exist not found in ARFiles location in $hostname. Please create the file"
+          Write-Output " ❌ C:\ARFiles\ApplicationUpdates\Plugins exist not found in ARFiles location in $hostname. Please create the file"
         }
       register: applicationUpdates
       ignore_errors: 'yes'
