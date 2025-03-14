@@ -13,7 +13,7 @@
         }
     - name: Copy DymocksBooklover folder from remote machine to local machine
       win_command: |
-        robocopy "\\10.250.20.200\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "\\10.100.10.193\ApplicationUpdates\Plugins\DymocksLoyalty" "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
     - name: Show robocopy output
