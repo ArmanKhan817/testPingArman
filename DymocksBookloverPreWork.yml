@@ -9,16 +9,19 @@
     - name: Rename existing DymocksLoyalty folder if it exists
       win_shell: |
         if (Test-Path "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty") {
-          Rename-Item -Path "ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" -NewName "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty_March2025" -Force
+          Rename-Item -Path "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" -NewName "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty_March2025" -Force
         }
+
     - name: Copy DymocksLoyalty folder from remote machine to local machine
-      win_command: |
+      win_shell: |
         robocopy "\\10.100.10.193\ApplicationUpdates\Plugins\DymocksLoyalty" "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
+
     - name: Show robocopy output
       ansible.builtin.debug:
         var: robocopy_result.stdout_lines
+
   become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
