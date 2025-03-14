@@ -6,12 +6,12 @@
     ansible_become_pass: "{{ password }}"
 
   tasks:
-    - name: Rename existing DymocksBooklover folder if it exists
+    - name: Rename existing DymocksLoyalty folder if it exists
       win_shell: |
-        if (Test-Path "C:\ARFiles\UpgradeMay2024\Plugins\DymocksBooklover") {
-          Rename-Item -Path "ARFiles\UpgradeMay2024\Plugins\DymocksBooklover" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover_March2025" -Force
+        if (Test-Path "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty") {
+          Rename-Item -Path "ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" -NewName "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty_March2025" -Force
         }
-    - name: Copy DymocksBooklover folder from remote machine to local machine
+    - name: Copy DymocksLoyalty folder from remote machine to local machine
       win_command: |
         robocopy "\\10.100.10.193\ApplicationUpdates\Plugins\DymocksLoyalty" "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
