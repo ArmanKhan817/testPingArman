@@ -1,0 +1,40 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Check if POS process is running
+      win_command: powershell.exe -ExecutionPolicy Bypass -Command "Get-Process -Name 'POS' -ErrorAction SilentlyContinue"
+      register: pos_process
+      ignore_errors: yes
+
+    - name: Stop POS process if running
+      win_command: powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name 'POS' -Confirm:$false -Force"
+      when: pos_process.rc == 0
+
+    - name: Rename existing DymocksLoyalty folder if it exists
+      win_shell: |
+        if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty") {
+          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty_March2025" -Force
+        }
+
+    - name: Ensure renamed folder exists before proceeding
+      ansible.builtin.pause:
+        seconds: 2
+
+    - name: Copy DymocksLoyalty folder from remote machine to local machine
+      win_command: |
+        robocopy "\\10.100.10.200\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
+      register: robocopy_result
+      ignore_errors: yes
+
+    - name: Show robocopy output
+      ansible.builtin.debug:
+        var: robocopy_result.stdout_lines
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
