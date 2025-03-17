@@ -11,10 +11,12 @@
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
-          $today = (Get-Date).ToString("yyyy-MM-dd")
+          $today = Get-Date
+          $fiveDaysAgo = $today.AddDays(-5).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           $hostname = $env:COMPUTERNAME
-          if ($formattedDate -ge $today) {
+
+          if ($formattedDate -ge $fiveDaysAgo) {
             Write-Output "Last Modified Date: $formattedDate - ✅ DymocksLoyalty Plugins Successfully Copied in $hostname IP: $ipAddress"
           } else {
             Write-Output "Last Modified Date: $formattedDate - ❌ DymocksLoyalty Plugins Copy Failed in $hostname IP: $ipAddress"
