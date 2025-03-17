@@ -5,9 +5,9 @@
     ansible_become_pass: "{{ password }}"
 
   tasks:
-    - name: Get last modified date of DymocksBooklover folder
+    - name: Get last modified date of DymocksLoyalty folder
       win_shell: |
-        $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksBooklover"
+        $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty"
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
@@ -15,20 +15,20 @@
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           $hostname = $env:COMPUTERNAME
           if ($formattedDate -ge $today) {
-            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksBooklover Plugins Successfully Copied in $hostname IP: $ipAddress"
+            Write-Output "Last Modified Date: $formattedDate - ✅ DymocksLoyalty Plugins Successfully Copied in $hostname IP: $ipAddress"
           } else {
-            Write-Output "Last Modified Date: $formattedDate - ❌ DymocksBooklover Plugins Copy Failed in $hostname IP: $ipAddress"
+            Write-Output "Last Modified Date: $formattedDate - ❌ DymocksLoyalty Plugins Copy Failed in $hostname IP: $ipAddress"
           }
         } else {
-          Write-Output "Folder not found!"
+          Write-Output "DymocksLoyalty Folder not found!"
         }
-      register: booklover_modified_date
+      register: dymocksLoyalty_modified_date
       changed_when: false
 
     - name: Show folder modification status
       ansible.builtin.debug:
-        var: booklover_modified_date.stdout
-      when: booklover_modified_date.stdout is defined
+        var: dymocksLoyalty_modified_date.stdout
+      when: dymocksLoyalty_modified_date.stdout is defined
   become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
