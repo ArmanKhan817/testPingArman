@@ -12,7 +12,7 @@
           $lastModified = (Get-Item $folder).LastWriteTime
           $formattedDate = $lastModified.ToString("yyyy-MM-dd")
           $today = Get-Date
-          $fiveDaysAgo = $today.AddDays(-10).ToString("yyyy-MM-dd")
+          $fiveDaysAgo = $today.AddDays(-15).ToString("yyyy-MM-dd")
           $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$"} | Select-Object -First 1).IPAddress
           $hostname = $env:COMPUTERNAME
 
