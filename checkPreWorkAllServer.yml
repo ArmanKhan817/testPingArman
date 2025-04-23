@@ -12,7 +12,7 @@
         $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notmatch "Loopback"} | Select-Object -First 1).IPAddress
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
-          $thresholdDate = (Get-Date).AddDays(-10)
+          $thresholdDate = (Get-Date).AddDays(-60)
           if ($lastModified -ge $thresholdDate) {
             Write-Output "✅ SUCCESS: DymocksLoyalty Plugins Copied - Last Modified: $($lastModified.ToString('yyyy-MM-dd')) on $hostname (IP: $ipAddress)"
           } else {
