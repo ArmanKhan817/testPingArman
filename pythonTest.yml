@@ -1,0 +1,19 @@
+    - name: Copy run_plot.bat from network share to local machine
+      win_command: |
+        robocopy "\\10.100.10.200\Scripts" "C:\Temp" run_plot.bat /NFL /NDL /NP /R:3 /W:5
+      register: copy_bat_result
+      ignore_errors: yes
+
+    - name: Show .bat copy result
+      ansible.builtin.debug:
+        var: copy_bat_result.stdout_lines
+
+    - name: Run the .bat file to invoke Python script in venv
+      win_command: |
+        powershell.exe -ExecutionPolicy Bypass -Command "Start-Process 'C:\Temp\run_plot.bat' -Wait"
+      register: bat_run_result
+      ignore_errors: yes
+
+    - name: Show bat file output
+      ansible.builtin.debug:
+        var: bat_run_result.stdout_lines
