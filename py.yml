@@ -1,0 +1,8 @@
+- name: Run test.bat from C:\test using cmd
+  win_command: cmd.exe /c "C:\test\test.bat"
+  register: test_bat_result
+  ignore_errors: yes
+
+- name: Show test.bat output
+  ansible.builtin.debug:
+    var: test_bat_result.stdout_lines
