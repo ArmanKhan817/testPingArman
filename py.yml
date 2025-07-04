@@ -1,5 +1,5 @@
 ---
-- name: Run test.bat from C:\test
+- name: Run test.bat and display output.txt
   hosts: all
   gather_facts: no
 
@@ -9,15 +9,15 @@
       register: bat_output
       ignore_errors: yes
 
-    - name: Show .bat output
+    - name: Show .bat execution stdout
       ansible.builtin.debug:
         var: bat_output.stdout_lines
 
-    - name: Read the generated output file
-      win_slurp:
-        src: C:\test\output.txt
+    - name: Read output.txt using type command
+      win_command: type C:\test\output.txt
       register: output_file
 
-    - name: Display output
+    - name: Display output.txt contents
       debug:
-        msg: "{{ output_file.content | b64decode }}"
+        msg: "{{ output_file.stdout }}"
+
