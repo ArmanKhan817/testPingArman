@@ -5,7 +5,7 @@
 
   tasks:
     - name: Run test.bat
-      win_command: cmd.exe /c "C:\test\test2.bat"
+      win_command: cmd.exe /c "C:\test\test.bat"
       register: bat_output
       ignore_errors: yes
 
