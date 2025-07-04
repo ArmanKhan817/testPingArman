@@ -1,9 +1,14 @@
 ---
-- name: Run test.bat and check output files
+- name: Run test.bat and wait for output.txt in C:\test
   hosts: all
   gather_facts: no
 
   tasks:
+    - name: Ensure C:\test directory exists
+      win_file:
+        path: C:\test
+        state: directory
+
     - name: Run test.bat
       win_command: cmd.exe /c "C:\test\test.bat"
       register: bat_output
@@ -13,27 +18,17 @@
       debug:
         var: bat_output.stdout_lines
 
-    - name: List files in C:\test
-      win_command: dir C:\test
-      register: dir_output
-
-    - name: Show directory listing of C:\test
-      debug:
-        msg: "{{ dir_output.stdout }}"
-
-    - name: Read output.txt if exists
-      win_stat:
+    - name: Wait for output.txt to be created (max 30s)
+      win_wait_for:
         path: C:\test\output.txt
-      register: output_stat
+        state: present
+        timeout: 30
 
     - name: Read output.txt content
       win_command: type C:\test\output.txt
       register: output_file
-      when: output_stat.stat.exists
+      ignore_errors: yes
 
     - name: Show output.txt contents
       debug:
-        msg: "{{ output_file.stdout }}"
-      when: output_stat.stat.exists
-
-
+        msg: "{{ output_file.stdout | default('output.txt not found') }}"
