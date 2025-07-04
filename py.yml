@@ -13,4 +13,11 @@
       ansible.builtin.debug:
         var: bat_output.stdout_lines
 
+    - name: Read the generated output file
+      win_slurp:
+        src: C:\test\output.txt
+      register: output_file
 
+    - name: Display output
+      debug:
+        msg: "{{ output_file.content | b64decode }}"
