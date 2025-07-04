@@ -35,12 +35,12 @@
       when: output_stat.stat.exists
       ignore_errors: yes
 
-    - name: Show output.txt contents if file found
+    - name: Show output.txt contents if file found and read
       debug:
         msg: "{{ output_file.stdout }}"
-      when: output_stat.stat.exists
+      when: output_file is defined and output_file.stdout is defined
 
     - name: Warn if output.txt not found
       debug:
-        msg: "output.txt does not exist yet."
-      when: not output_stat.stat.exists
+        msg: "output.txt does not exist or could not be read."
+      when: not output_file is defined or not output_file.stdout is defined
