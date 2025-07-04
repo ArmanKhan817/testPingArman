@@ -20,12 +20,12 @@
 
     - name: Wait for output.txt to be created (max 30s)
       win_wait_for:
-        path: C:\test\output.txt
+        path: "C:\test\output.txt"
         state: present
         timeout: 30
 
     - name: Read output.txt content
-      win_command: type C:\test\output.txt
+      win_command: type "C:\test\output.txt"
       register: output_file
       ignore_errors: yes
 
