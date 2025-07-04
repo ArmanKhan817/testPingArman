@@ -1,13 +1,18 @@
----
-- name: Run test.bat file on Windows
-  hosts: all
-  gather_facts: false
-  tasks:
-    - name: Run test.bat from C:\test using cmd
-      win_command: cmd.exe /c "C:\test\test.bat"
-      register: test_bat_result
-      ignore_errors: yes
+- name: Run test.bat
+  win_command: cmd.exe /c "C:\test\test.bat"
+  register: bat_result
+  ignore_errors: yes
 
-    - name: Show test.bat output
-      ansible.builtin.debug:
-        var: test_bat_result.stdout_lines
+- name: Show batch file execution result
+  debug:
+    var: bat_result.stdout_lines
+
+- name: Read the output from output.txt
+  win_slurp:
+    src: C:\test\output.txt
+  register: file_contents
+
+- name: Display contents of output.txt
+  debug:
+    msg: "{{ file_contents['content'] | b64decode }}"
+
