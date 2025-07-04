@@ -1,5 +1,5 @@
 ---
-- name: Run test.bat and display output.txt
+- name: Run test.bat and check output files
   hosts: all
   gather_facts: no
 
@@ -9,15 +9,31 @@
       register: bat_output
       ignore_errors: yes
 
-    - name: Show .bat execution stdout
-      ansible.builtin.debug:
+    - name: Show test.bat stdout
+      debug:
         var: bat_output.stdout_lines
 
-    - name: Read output.txt using type command
+    - name: List files in C:\test
+      win_command: dir C:\test
+      register: dir_output
+
+    - name: Show directory listing of C:\test
+      debug:
+        msg: "{{ dir_output.stdout }}"
+
+    - name: Read output.txt if exists
+      win_stat:
+        path: C:\test\output.txt
+      register: output_stat
+
+    - name: Read output.txt content
       win_command: type C:\test\output.txt
       register: output_file
+      when: output_stat.stat.exists
 
-    - name: Display output.txt contents
+    - name: Show output.txt contents
       debug:
         msg: "{{ output_file.stdout }}"
+      when: output_stat.stat.exists
+
 
