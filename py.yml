@@ -1,6 +1,6 @@
 ---
 - name: Run test.bat from C:\test
-  hosts: windows
+  hosts: all
   gather_facts: no
 
   tasks:
