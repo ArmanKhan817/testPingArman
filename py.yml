@@ -18,29 +18,3 @@
       debug:
         var: bat_output.stdout_lines
 
-    - name: Wait for output.txt to be created (max 30s)
-      win_wait_for:
-        path: C:\test\output.txt
-        state: present
-        timeout: 30
-
-    - name: Check if output.txt exists
-      win_stat:
-        path: C:\test\output.txt
-      register: output_stat
-
-    - name: Read output.txt content if it exists
-      win_command: type C:\test\output.txt
-      register: output_file
-      when: output_stat.stat.exists
-      ignore_errors: yes
-
-    - name: Show output.txt contents if file found and read
-      debug:
-        msg: "{{ output_file.stdout }}"
-      when: output_file is defined and output_file.stdout is defined
-
-    - name: Warn if output.txt not found
-      debug:
-        msg: "output.txt does not exist or could not be read."
-      when: not output_file is defined or not output_file.stdout is defined
