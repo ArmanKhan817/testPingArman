@@ -24,11 +24,23 @@
         state: present
         timeout: 30
 
-    - name: Read output.txt content
-      win_command: type "C:\test\output.txt"
+    - name: Check if output.txt exists
+      win_stat:
+        path: C:\test\output.txt
+      register: output_stat
+
+    - name: Read output.txt content if it exists
+      win_command: type C:\test\output.txt
       register: output_file
+      when: output_stat.stat.exists
       ignore_errors: yes
 
-    - name: Show output.txt contents
+    - name: Show output.txt contents if file found
       debug:
-        msg: "{{ output_file.stdout | default('output.txt not found') }}"
+        msg: "{{ output_file.stdout }}"
+      when: output_stat.stat.exists
+
+    - name: Warn if output.txt not found
+      debug:
+        msg: "output.txt does not exist yet."
+      when: not output_stat.stat.exists
