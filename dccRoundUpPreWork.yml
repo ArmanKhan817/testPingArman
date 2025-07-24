@@ -34,29 +34,34 @@
     - name: Check and update StorePluginConfig.sql values
       win_shell: |
         $filePath = "C:\ARFILES\UpgradeMay2024\Scripts\Loyalty\StorePluginConfig.sql"
+        $changes = @()
         if (Test-Path $filePath) {
           $content = Get-Content $filePath
           $modified = $false
 
           if ($content -match '<EnableDonation>\s*false\s*</EnableDonation>') {
             $content = $content -replace '<EnableDonation>\s*false\s*</EnableDonation>', '<EnableDonation>true</EnableDonation>'
+            $changes += "✔️ Changed <EnableDonation> to true"
             $modified = $true
           }
 
           if ($content -match '<DefaultDonation>\s*1\s*</DefaultDonation>') {
             $content = $content -replace '<DefaultDonation>\s*1\s*</DefaultDonation>', '<DefaultDonation>2</DefaultDonation>'
+            $changes += "✔️ Changed <DefaultDonation> from 1 to 2"
             $modified = $true
           }
 
           if ($modified) {
             Set-Content -Path $filePath -Value $content
-            Write-Output "✅ StorePluginConfig.sql updated successfully."
+            $changes += "✅ StorePluginConfig.sql updated successfully."
           } else {
-            Write-Output "ℹ️ No changes needed in StorePluginConfig.sql."
+            $changes += "ℹ️ No changes needed in StorePluginConfig.sql."
           }
         } else {
-          Write-Output "❌ StorePluginConfig.sql not found."
+          $changes += "❌ StorePluginConfig.sql not found."
         }
+
+        $changes -join "`r`n"
       register: update_sql_result
       ignore_errors: yes
       changed_when: "'updated successfully' in update_sql_result.stdout"
