@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Sync APPLICATION_CONFIG via linked server with XML column workaround
+  hosts: all
   gather_facts: yes
   vars:
     ansible_become_user: "{{ username }}"
@@ -7,14 +8,25 @@
     sql_user: sa
     sql_pass: Dym428!
   tasks:
-    - name: Build SQL query using survey_ip
+    - name: Build SQL query with XML column cast
       set_fact:
         sql_query: |
-          TRUNCATE TABLE dbo.APPLICATION_CONFIG;
-          INSERT INTO dbo.APPLICATION_CONFIG
-          SELECT * FROM [{{ survey_ip }}SVR].poslocal.dbo.APPLICATION_CONFIG;
+          TRUNCATE TABLE poslocal.dbo.APPLICATION_CONFIG;
+          INSERT INTO dbo.APPLICATION_CONFIG (
+            [key], application, target, branch_no, all_branches_yn,
+            workstation_no, configuration, last_modified
+          )
+          SELECT 
+            [key], application, target, branch_no, all_branches_yn,
+            workstation_no, CAST(configuration AS NVARCHAR(MAX)) AS configuration, last_modified
+          FROM OPENQUERY([{{ survey_ip }}SVR], '
+            SELECT 
+              [key], application, target, branch_no, all_branches_yn,
+              workstation_no, CAST(configuration AS NVARCHAR(MAX)) AS configuration, last_modified
+            FROM poslocal.dbo.APPLICATION_CONFIG
+          ');
 
-    - name: Run SQL query on local SQL Server using sqlcmd with sa credentials
+    - name: Execute SQL query on local SQL Server using sqlcmd
       win_shell: |
         $Query = @"
         {{ sql_query }}
