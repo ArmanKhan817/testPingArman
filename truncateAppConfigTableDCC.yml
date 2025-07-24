@@ -1,0 +1,33 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+    sql_user: sa
+    sql_pass: Dym428!
+  tasks:
+    - name: Build SQL query using survey_ip
+      set_fact:
+        sql_query: |
+          TRUNCATE TABLE dbo.APPLICATION_CONFIG;
+          INSERT INTO dbo.APPLICATION_CONFIG
+          SELECT * FROM [{{ survey_ip }}SVR].poslocal.dbo.APPLICATION_CONFIG;
+
+    - name: Run SQL query on local SQL Server using sqlcmd with sa credentials
+      win_shell: |
+        $Query = @"
+        {{ sql_query }}
+        "@
+
+        sqlcmd -S localhost -U "{{ sql_user }}" -P "{{ sql_pass }}" -d poslocal -Q $Query
+      register: sql_execution
+      ignore_errors: yes
+      changed_when: "'rows affected' in sql_execution.stdout or sql_execution.rc == 0"
+
+    - name: Show SQL execution output
+      ansible.builtin.debug:
+        var: sql_execution.stdout
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
