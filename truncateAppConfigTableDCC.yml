@@ -12,7 +12,7 @@
       set_fact:
         sql_query: |
           TRUNCATE TABLE poslocal.dbo.APPLICATION_CONFIG;
-          INSERT INTO dbo.APPLICATION_CONFIG (
+          INSERT INTO poslocal.dbo.APPLICATION_CONFIG (
             [key], application, target, branch_no, all_branches_yn,
             workstation_no, configuration, last_modified
           )
