@@ -1,0 +1,36 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Get last modified date of DymocksLoyalty folder
+      win_shell: |
+        $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty"
+        $thresholdDate = Get-Date "2025-03-14"
+
+        if (Test-Path $folder) {
+          $lastModified = (Get-Item $folder).LastWriteTime
+          $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$" } | Select-Object -First 1).IPAddress
+          $hostname = $env:COMPUTERNAME
+
+          if ($lastModified -ge $thresholdDate) {
+            Write-Output "Last Modified Date: $($lastModified.ToString('yyyy-MM-dd')) - ✅ DymocksLoyalty Plugins Successfully Copied in $hostname IP: $ipAddress"
+          } else {
+            Write-Output "Last Modified Date: $($lastModified.ToString('yyyy-MM-dd')) - ❌ DymocksLoyalty Plugins Copy Failed in $hostname IP: $ipAddress"
+          }
+        } else {
+          Write-Output "DymocksLoyalty Folder not found!"
+        }
+      register: dymocksLoyalty_modified_date
+      changed_when: false
+
+    - name: Show folder modification status
+      ansible.builtin.debug:
+        var: dymocksLoyalty_modified_date.stdout
+      when: dymocksLoyalty_modified_date.stdout is defined
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
