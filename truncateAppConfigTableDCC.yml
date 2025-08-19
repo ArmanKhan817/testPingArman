@@ -8,6 +8,17 @@
     sql_user: sa
     sql_pass: Dym428!
   tasks:
+    - name: Check if POS process is running
+      win_command: >-
+        powershell.exe -ExecutionPolicy Bypass -Command "Get-Process -Name 'POS'
+        -ErrorAction SilentlyContinue"
+      register: pos_process
+      ignore_errors: 'yes'
+    - name: Stop POS process if running
+      win_command: >-
+        powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name
+        'POS' -Confirm:$false -Force"
+      when: pos_process.rc == 0
     - name: Build SQL query with XML column cast
       set_fact:
         sql_query: |
