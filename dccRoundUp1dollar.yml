@@ -1,0 +1,75 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+  tasks:
+    - name: Check and update EnablePlusSubscription in configureDymocksLoyalty.ps1
+      win_shell: |
+        $filePath = "C:\ARFILES\UpgradeMay2024\configureDymocksLoyalty.ps1"
+        if (Test-Path $filePath) {
+          $content = Get-Content $filePath
+          $modified = $false
+          if ($content -match '\$EnablePlusSubscription\s*=\s*"false"') {
+            $content = $content -replace '(\$EnablePlusSubscription\s*=\s*)"false"', '$1"true"'
+            $modified = $true
+          }
+          if ($modified) {
+            Set-Content -Path $filePath -Value $content
+            Write-Output "✅ Updated EnablePlusSubscription to true."
+          } else {
+            Write-Output "ℹ️ No change needed for EnablePlusSubscription."
+          }
+        } else {
+          Write-Output "❌ File not found: $filePath"
+        }
+      register: update_ps1_result
+      ignore_errors: yes
+      changed_when: "'Updated EnablePlusSubscription to true.' in update_ps1_result.stdout"
+
+    - name: Output result for configureDymocksLoyalty.ps1
+      ansible.builtin.debug:
+        var: update_ps1_result.stdout
+
+    - name: Check and update StorePluginConfig.sql values
+      win_shell: |
+        $filePath = "C:\ARFILES\UpgradeMay2024\Scripts\Loyalty\StorePluginConfig.sql"
+        $changes = @()
+        if (Test-Path $filePath) {
+          $content = Get-Content $filePath
+          $modified = $false
+
+          if ($content -match '<EnableDonation>\s*false\s*</EnableDonation>') {
+            $content = $content -replace '<EnableDonation>\s*false\s*</EnableDonation>', '<EnableDonation>true</EnableDonation>'
+            $changes += "✔️ Changed <EnableDonation> to true"
+            $modified = $true
+          }
+
+          if ($content -match '<DefaultDonation>\s*2\s*</DefaultDonation>') {
+            $content = $content -replace '<DefaultDonation>\s*2\s*</DefaultDonation>', '<DefaultDonation>1</DefaultDonation>'
+            $changes += "✔️ Changed <DefaultDonation> from 2 to 1"
+            $modified = $true
+          }
+
+          if ($modified) {
+            Set-Content -Path $filePath -Value $content
+            $changes += "✅ StorePluginConfig.sql updated successfully."
+          } else {
+            $changes += "ℹ️ No changes needed in StorePluginConfig.sql."
+          }
+        } else {
+          $changes += "❌ StorePluginConfig.sql not found."
+        }
+
+        $changes -join "`r`n"
+      register: update_sql_result
+      ignore_errors: yes
+      changed_when: "'updated successfully' in update_sql_result.stdout"
+
+    - name: Output result for StorePluginConfig.sql
+      ansible.builtin.debug:
+        var: update_sql_result.stdout
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
