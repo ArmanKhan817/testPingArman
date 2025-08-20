@@ -10,13 +10,17 @@
   tasks:
     - name: Check if POS process is running
       win_shell: |
-        Get-Process -Name 'POS' -ErrorAction SilentlyContinue
+        try {
+          Get-Process -Name 'POS' -ErrorAction Stop | Out-Null
+          exit 0
+        } catch {
+          exit 1
+        }
       register: pos_process
       ignore_errors: yes
 
     - name: Stop POS process if running
-      win_shell: |
-        Stop-Process -Name 'POS' -Confirm:$false -Force
+      win_shell: Stop-Process -Name 'POS' -Force -Confirm:$false
       when: pos_process.rc == 0
 
     - name: Build SQL query with XML column cast
