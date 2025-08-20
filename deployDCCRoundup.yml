@@ -1,20 +1,25 @@
 - hosts: all
-  gather_facts: 'yes'
+  gather_facts: yes
   vars:
     ansible_become_user: '{{ username }}'
     ansible_become_pass: '{{ password }}'
   tasks:
+
     - name: Check if POS process is running
-      win_command: >-
-        powershell.exe -ExecutionPolicy Bypass -Command "Get-Process -Name 'POS'
-        -ErrorAction SilentlyContinue"
+      win_shell: |
+        try {
+          Get-Process -Name 'POS' -ErrorAction Stop | Out-Null
+          Write-Output "POS process is running"
+        } catch {
+          Write-Output "POS process not found"
+        }
       register: pos_process
-      ignore_errors: 'yes'
+      ignore_errors: yes
+
     - name: Stop POS process if running
-      win_command: >-
-        powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name
-        'POS' -Confirm:$false -Force"
-      when: pos_process.rc == 0
+      win_shell: Stop-Process -Name 'POS' -Force -Confirm:$false
+      when: "'POS process is running' in pos_process.stdout"
+
     - name: Run configureDymocksLoyalty.ps1
       win_shell: |
         $scriptPath = "C:\ARFILES\UpgradeMay2024\configureDymocksLoyalty.ps1"
@@ -26,11 +31,13 @@
           Write-Output "❌ Script not found: $scriptPath"
         }
       register: run_script_result
-      ignore_errors: 'yes'
-      changed_when: '''executed successfully'' in run_script_result.stdout'
+      ignore_errors: yes
+      changed_when: "'executed successfully' in run_script_result.stdout"
+
     - name: Show script execution output
       ansible.builtin.debug:
         var: run_script_result.stdout
-  become: 'yes'
+
+  become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
