@@ -9,16 +9,16 @@
     sql_pass: Dym428!
   tasks:
     - name: Check if POS process is running
-      win_command: >-
-        powershell.exe -ExecutionPolicy Bypass -Command "Get-Process -Name 'POS'
-        -ErrorAction SilentlyContinue"
+      win_shell: |
+        Get-Process -Name 'POS' -ErrorAction SilentlyContinue
       register: pos_process
-      ignore_errors: 'yes'
+      ignore_errors: yes
+
     - name: Stop POS process if running
-      win_command: >-
-        powershell.exe -ExecutionPolicy Bypass -Command "Stop-Process -Name
-        'POS' -Confirm:$false -Force"
+      win_shell: |
+        Stop-Process -Name 'POS' -Confirm:$false -Force
       when: pos_process.rc == 0
+
     - name: Build SQL query with XML column cast
       set_fact:
         sql_query: |
@@ -43,14 +43,17 @@
         {{ sql_query }}
         "@
 
-        sqlcmd -S localhost -U "{{ sql_user }}" -P "{{ sql_pass }}" -d poslocal -Q $Query
+        $TempFile = New-TemporaryFile
+        Set-Content -Path $TempFile -Value $Query
+        sqlcmd -S localhost -U "{{ sql_user }}" -P "{{ sql_pass }}" -d poslocal -i $TempFile
       register: sql_execution
       ignore_errors: yes
       changed_when: "'rows affected' in sql_execution.stdout or sql_execution.rc == 0"
 
     - name: Show SQL execution output
-      ansible.builtin.debug:
+      debug:
         var: sql_execution.stdout
+
   become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
