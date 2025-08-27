@@ -8,7 +8,7 @@
   tasks:
     - name: Rename existing DymocksLoyalty folder if it exists
       win_shell: |
-        if (Test-Path "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty") {
+        if (Test-Path "C:\ARFiles\ApplicationUpdates\Plugins\Test") {
           Rename-Item -Path "C:\ARFiles\ApplicationUpdates\Plugins\Test" -NewName "C:\ARFiles\ApplicationUpdates\Plugins\Test_2025" -Force
         }
 
