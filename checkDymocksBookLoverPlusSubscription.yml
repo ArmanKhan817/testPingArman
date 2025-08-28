@@ -1,0 +1,32 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+    sa_password: "YourStrongPasswordHere"
+
+  tasks:
+    - name: Check DymocksLoyalty file count and SQL config
+      win_shell: |
+        $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty"
+        $fileCount = (Test-Path $folder) ? (Get-ChildItem $folder -File).Count : 0
+        $server = (Get-NetIPAddress -AddressFamily IPv4 | Where { $_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$" } | Select -First 1).IPAddress
+        $query = "SELECT [configuration] FROM APPLICATION_CONFIG WHERE [application] = 'DymocksLoyalty'"
+        Import-Module SqlServer
+        $result = Invoke-Sqlcmd -ServerInstance $server -Database "BOData" -Query $query -Username "sa" -Password "{{ sa_password }}"
+        $id = ($result) ? ([xml][System.Web.HttpUtility]::HtmlDecode($result.configuration)).PluginConfig.NewPlusSubscriptionProductId : ""
+        if ($fileCount -eq 93 -and $id -eq "0743966250422") {
+          Write-Output "✅ Successfully deployed Booklover"
+        } else {
+          Write-Output "❌ Deployment check failed - Files: $fileCount, ProductId: $id"
+        }
+      register: deploy_check
+      changed_when: false
+
+    - name: Show deployment result
+      ansible.builtin.debug:
+        var: deploy_check.stdout
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
