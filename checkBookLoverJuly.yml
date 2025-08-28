@@ -8,7 +8,7 @@
     - name: Get last modified date of DymocksLoyalty folder
       win_shell: |
         $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty"
-        $thresholdDate = Get-Date "2025-03-14"
+        $thresholdDate = Get-Date "2025-08-28"
 
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
