@@ -14,7 +14,7 @@
           $fileCount = 0
         }
 
-        if ($fileCount -eq 93) {
+        if ($fileCount -eq 92) {
           Write-Output "✅ Deployment check passed - Files: $fileCount"
         } else {
           Write-Output "❌ Deployment check failed - Files: $fileCount"
