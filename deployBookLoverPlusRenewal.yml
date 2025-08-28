@@ -1,0 +1,43 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: '{{ username }}'
+    ansible_become_pass: '{{ password }}'
+  tasks:
+
+    - name: Check if POS process is running
+      win_shell: |
+        try {
+          Get-Process -Name 'POS' -ErrorAction Stop | Out-Null
+          Write-Output "POS process is running"
+        } catch {
+          Write-Output "POS process not found"
+        }
+      register: pos_process
+      ignore_errors: yes
+
+    - name: Stop POS process if running
+      win_shell: Stop-Process -Name 'POS' -Force -Confirm:$false
+      when: "'POS process is running' in pos_process.stdout"
+
+    - name: Run configureDymocksLoyalty.ps1
+      win_shell: |
+        $scriptPath = "C:\ARFILES\ApplicationUpdates\Plugins\DymocksLoyaltyUpgrade\deployPlugins.ps1"
+        if (Test-Path $scriptPath) {
+          Write-Output "▶️ Running script: $scriptPath"
+          & $scriptPath
+          Write-Output "✅ Script executed successfully: $scriptPath"
+        } else {
+          Write-Output "❌ Script not found: $scriptPath"
+        }
+      register: run_script_result
+      ignore_errors: yes
+      changed_when: "'executed successfully' in run_script_result.stdout"
+
+    - name: Show script execution output
+      ansible.builtin.debug:
+        var: run_script_result.stdout
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
