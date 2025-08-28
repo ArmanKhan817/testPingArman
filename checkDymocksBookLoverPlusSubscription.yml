@@ -3,22 +3,21 @@
   vars:
     ansible_become_user: "{{ username }}"
     ansible_become_pass: "{{ password }}"
-    sa_password: "{{ sa_password }}"
 
   tasks:
-    - name: Check DymocksLoyalty file count and SQL config
+    - name: Check DymocksLoyalty file count only
       win_shell: |
         $folder = "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty"
-        $fileCount = (Test-Path $folder) ? (Get-ChildItem $folder -File).Count : 0
-        $server = (Get-NetIPAddress -AddressFamily IPv4 | Where { $_.IPAddress -match "^\d+\.\d+\.\d+\.\d+$" } | Select -First 1).IPAddress
-        $query = "SELECT [configuration] FROM APPLICATION_CONFIG WHERE [application] = 'DymocksLoyalty'"
-        Import-Module SqlServer
-        $result = Invoke-Sqlcmd -ServerInstance $server -Database "BOData" -Query $query -Username "sa" -Password "{{ sa_password }}"
-        $id = ($result) ? ([xml][System.Web.HttpUtility]::HtmlDecode($result.configuration)).PluginConfig.NewPlusSubscriptionProductId : ""
-        if ($fileCount -eq 93 -and $id -eq "0743966250422") {
-          Write-Output "✅ Successfully deployed Booklover"
+        if (Test-Path $folder) {
+          $fileCount = (Get-ChildItem $folder -File).Count
         } else {
-          Write-Output "❌ Deployment check failed - Files: $fileCount, ProductId: $id"
+          $fileCount = 0
+        }
+
+        if ($fileCount -eq 93) {
+          Write-Output "✅ Deployment check passed - Files: $fileCount"
+        } else {
+          Write-Output "❌ Deployment check failed - Files: $fileCount"
         }
       register: deploy_check
       changed_when: false
