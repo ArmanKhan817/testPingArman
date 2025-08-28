@@ -18,7 +18,7 @@
     - name: Rename existing DymocksLoyalty folder if it exists
       win_shell: |
         if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty") {
-          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty_July2025" -Force
+          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty_V2.8009.0.10" -Force
         }
 
     - name: Ensure renamed folder exists before proceeding
@@ -27,7 +27,7 @@
 
     - name: Copy DymocksLoyalty folder from remote machine to local machine
       win_command: |
-        robocopy "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyaltyUpgrade\Plugins\DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
 
@@ -38,3 +38,4 @@
   become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
