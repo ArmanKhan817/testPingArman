@@ -2,16 +2,9 @@
 - hosts: all
   gather_facts: yes
 
-  vars_prompt:
-    - name: "survey_ip"
-      prompt: "Enter the third octet of the source server IP (10.61.x.200)"
-      private: no
-
   vars:
     ansible_become_user: "{{ username }}"
     ansible_become_pass: "{{ password }}"
-    # Dynamically build the UNC path using user input
-    source_share: "\\10.61.{{ survey_ip }}.200\ARFiles\DymocksLoyaltyUpgrade\Plugins\DymocksLoyalty"
 
   tasks:
     - name: Check if POS process is running
@@ -35,7 +28,7 @@
 
     - name: Copy DymocksLoyalty folder from network share to local Plugins folder
       win_command: |
-        robocopy "{{ source_share }}" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "//10.61.{{ survey_ip }}.200/ARFiles/DymocksLoyaltyUpgrade/Plugins/DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
 
