@@ -1,0 +1,21 @@
+---
+- name: Run deleteS3content.py on Windows hosts
+  hosts: all
+  gather_facts: no
+
+  vars:
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+
+  tasks:
+    - name: Run deleteS3content.py with AWS credentials
+      win_command: >
+        python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py
+        {{ aws_access_key }} {{ aws_secret_key }}
+      register: py_output
+      ignore_errors: yes
+
+    - name: Show script stdout
+      debug:
+        var: py_output.stdout_lines
+
