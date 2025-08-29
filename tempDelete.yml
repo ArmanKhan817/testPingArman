@@ -1,0 +1,15 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: '{{ username }}'
+    ansible_become_pass: '{{ password }}'
+
+  tasks:
+    - name: Delete ApplicationUpdates folder including all contents
+      win_file:
+        path: C:\ARFiles\ApplicationUpdates
+        state: absent
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
