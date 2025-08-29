@@ -27,7 +27,7 @@
 
     - name: Copy DymocksLoyalty folder from remote machine to local machine
       win_command: |
-        robocopy "C:\ARFiles\ApplicationUpdates\Plugins\DymocksLoyaltyUpgrade\Plugins\DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "C:\ARFiles\DymocksLoyaltyUpgrade\Plugins\DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
 
@@ -38,4 +38,5 @@
   become: yes
   become_method: runas
   become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
 
