@@ -5,8 +5,10 @@
   vars:
     ansible_become_user: "{{ username }}"
     ansible_become_pass: "{{ password }}"
+    # survey_ip should be provided via AWX extra-vars or inventory
 
   tasks:
+
     - name: Check if POS process is running
       win_command: powershell.exe -ExecutionPolicy Bypass -Command "Get-Process -Name 'POS' -ErrorAction SilentlyContinue"
       register: pos_process
