@@ -21,7 +21,7 @@
     - name: Rename existing DymocksLoyalty folder if it exists
       win_shell: |
         if (Test-Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty") {
-          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty_V2.8009.0.10" -Force
+          Rename-Item -Path "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" -NewName "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty_V2.8009.0.old" -Force
         }
 
     - name: Pause briefly to ensure rename completes
