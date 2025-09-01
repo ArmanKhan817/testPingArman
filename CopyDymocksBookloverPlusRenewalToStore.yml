@@ -30,7 +30,7 @@
 
     - name: Copy DymocksLoyalty folder from network share to local Plugins folder
       win_command: |
-        robocopy "//10.61.{{ survey_ip }}.200/ARFiles/DymocksLoyaltyUpgrade/Plugins/DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
+        robocopy "//10.61.{{ survey_ip }}.200/ARFiles/DymocksLoyalty" "C:\Program Files (x86)\AdvanceRetail\EXE\Plugins\DymocksLoyalty" /E /NFL /NDL /NP /R:3 /W:5
       register: robocopy_result
       ignore_errors: yes
       failed_when: robocopy_result.rc not in [0,1]
