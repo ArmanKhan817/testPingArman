@@ -23,7 +23,9 @@
       register: script_result
       ignore_errors: yes
 
-    - name: Show script execut
+    - name: Show script execution return code
+      debug:
+        msg: "Script finished with return code {{ script_result.rc }}"
 
 
 
