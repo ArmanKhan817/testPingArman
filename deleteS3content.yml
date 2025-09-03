@@ -4,8 +4,8 @@
   gather_facts: no
 
   vars:
-    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
-    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
 
   tasks:
     - name: Ensure script directory exists
@@ -25,7 +25,7 @@
 
     - name: Show script execution return code
       debug:
-        msg: "Script finished with return code {{ script_result.rc }}"
+        msg: "{{ script_result.rc | default('Script did not run') }}"
 
 
 
