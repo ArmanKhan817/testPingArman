@@ -1,6 +1,6 @@
 ---
 - name: Run deleteS3content.py on Windows hosts
-  hosts: all
+  hosts: 10.100.3.53
   gather_facts: no
 
   tasks:
