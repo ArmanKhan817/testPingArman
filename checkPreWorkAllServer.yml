@@ -7,19 +7,19 @@
   tasks:
     - name: Get last modified date of DymocksLoyalty folder
       win_shell: |
-        $folder = "C:\ARFiles\DymocksLoyalty"
+        $folder = "C:\ARFiles\DymocksLoyaltyUpgrade"
         $hostname = $env:COMPUTERNAME
         $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -notmatch "Loopback"} | Select-Object -First 1).IPAddress
         if (Test-Path $folder) {
           $lastModified = (Get-Item $folder).LastWriteTime
           $thresholdDate = (Get-Date).AddDays(-60)
           if ($lastModified -ge $thresholdDate) {
-            Write-Output "✅ SUCCESS: DymocksLoyalty Plugins Copied - Last Modified: $($lastModified.ToString('yyyy-MM-dd')) on $hostname (IP: $ipAddress)"
+            Write-Output "✅ SUCCESS: DymocksLoyaltyUpgrade Plugins Copied - Last Modified: $($lastModified.ToString('yyyy-MM-dd')) on $hostname (IP: $ipAddress)"
           } else {
-            Write-Output "❌ ERROR: DymocksLoyalty Plugins Copy Failed - Last Modified: $($lastModified.ToString('yyyy-MM-dd')) on $hostname (IP: $ipAddress)"
+            Write-Output "❌ ERROR: DymocksLoyaltyUpgrade Plugins Copy Failed - Last Modified: $($lastModified.ToString('yyyy-MM-dd')) on $hostname (IP: $ipAddress)"
           }
         } else {
-          Write-Output "❌ ERROR: DymocksLoyalty Folder Not Found in ARFiles on $hostname (IP: $ipAddress). Please copy the file."
+          Write-Output "❌ ERROR: DymocksLoyaltyUpgrade Folder Not Found in ARFiles on $hostname (IP: $ipAddress). Please copy the file."
         }
       register: dymocksLoyalty_modified_date
       ignore_errors: yes
