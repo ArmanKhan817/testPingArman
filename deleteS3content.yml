@@ -1,22 +1,29 @@
+---
 - name: Run deleteS3content.py on Windows hosts
-  hosts: all
+  hosts: windows
   gather_facts: no
 
-  vars:
-    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
-    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
-
   tasks:
-    - name: Run deleteS3content.py with AWS credentials
-      win_command: >
-        "C:\Program Files\Python311\python.exe"
-        "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
-        "{{ aws_access_key }}" "{{ aws_secret_key }}"
-      register: py_output
-      ignore_errors: yes
+    - name: Ensure log directory exists
+      ansible.windows.win_file:
+        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
+        state: directory
 
-    - name: Show script stdout
+    - name: Run deleteS3content.py with AWS credentials and log output
+      ansible.windows.win_command: >
+        cmd.exe /c
+        python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py
+        --aws-access-key={{ aws_access_key }}
+        --aws-secret-key={{ aws_secret_key }}
+        --bucket={{ bucket_name }}
+        >> C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.log
+        2>&1
+      args:
+        chdir: C:\trade_report_UA_backup\tradeReportAppflowAutomation
+      register: script_result
+
+    - name: Show script execution status
       debug:
-        msg: "{{ py_output.stdout_lines | default(py_output.stdout, true) }}"
+        var: script_result.stdout
 
 
