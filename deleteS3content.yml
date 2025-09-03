@@ -1,4 +1,3 @@
----
 - name: Run deleteS3content.py on Windows hosts
   hosts: all
   gather_facts: no
@@ -10,12 +9,14 @@
   tasks:
     - name: Run deleteS3content.py with AWS credentials
       win_command: >
-        C:\Program Files\Python311\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py
-        {{ aws_access_key }} {{ aws_secret_key }}
+        "C:\Program Files\Python311\python.exe"
+        "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
+        "{{ aws_access_key }}" "{{ aws_secret_key }}"
       register: py_output
       ignore_errors: yes
 
     - name: Show script stdout
       debug:
-        var: py_output.stdout_lines
+        msg: "{{ py_output.stdout_lines | default(py_output.stdout, true) }}"
+
 
