@@ -1,11 +1,16 @@
+---
 - name: Run deleteS3content.py on Windows hosts
   hosts: all
   gather_facts: yes
 
   vars:
+    python_path: "C:\\Program Files\\Python311\\python.exe"
+    script_dir: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation"
+    script_file: "deleteS3content.py"
+
+    # AWS credentials passed from AWX credential -> environment variables
     aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
     aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
-    script_path: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation\\deleteS3content.py"
 
   tasks:
     - name: Fail if AWS credentials are missing
@@ -13,12 +18,27 @@
         msg: "AWS credentials are missing!"
       when: aws_access_key == "" or aws_secret_key == ""
 
-    - name: Run deleteS3content.py
+    - name: Ensure script directory exists
+      ansible.windows.win_file:
+        path: "{{ script_dir }}"
+        state: directory
+
+    - name: Run deleteS3content.py with AWS credentials
       ansible.windows.win_command:
-        cmd: '"C:\Program Files\Python311\python.exe" "{{ script_path }}" "{{ aws_access_key }}" "{{ aws_secret_key }}"'
+        cmd: "{{ python_path }} {{ script_file }} {{ aws_access_key }} {{ aws_secret_key }}"
+        chdir: "{{ script_dir }}"
       register: script_result
       ignore_errors: yes
 
-    - name: Show script status
-      debug:
-        msg: "Script finished with return code {{ script_result.rc | default('unknown') }}. Check the log on Windows host."
+    - name: Show script execution stdout
+      ansible.builtin.debug:
+        var: script_result.stdout_lines
+
+    - name: Show script execution stderr
+      ansible.builtin.debug:
+        var: script_result.stderr_lines
+
+    - name: Show script return code
+      ansible.builtin.debug:
+        msg: "Return code: {{ script_result.rc | default('unknown') }}"
+
