@@ -11,7 +11,7 @@
 
     - name: Run deleteS3content.py
       ansible.windows.win_command:
-        cmd: '"C:\Program Files\Python311\python.exe" "deleteS3content.py"'
+        cmd: '"python.exe" "deleteS3content.py"'
         chdir: C:\trade_report_UA_backup\tradeReportAppflowAutomation
       register: script_result
       ignore_errors: yes
