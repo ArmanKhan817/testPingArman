@@ -5,7 +5,8 @@
 
   vars:
     python_path: "C:\\Program Files\\Python311\\python.exe"
-    script_path: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation\\deleteS3content.py"
+    script_dir: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation"
+    script_name: "deleteS3content.py"
 
     # AWS credentials injected from AWX credential
     aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
@@ -20,12 +21,13 @@
 
     - name: Ensure script directory exists
       ansible.windows.win_file:
-        path: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation"
+        path: "{{ script_dir }}"
         state: directory
 
     - name: Run deleteS3content.py with AWS credentials
       ansible.windows.win_command:
-        cmd: '"{{ python_path }}" "{{ script_path }}" {{ aws_access_key }} {{ aws_secret_key }}'
+        cmd: '"{{ python_path }}" "{{ script_name }}" {{ aws_access_key }} {{ aws_secret_key }}'
+        chdir: "{{ script_dir }}"
       register: script_result
       ignore_errors: yes
 
