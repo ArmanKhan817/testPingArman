@@ -1,5 +1,5 @@
 ---
-- name: Run deleteS3content.py
+- name: Run deleteS3content.py directly
   hosts: all
   gather_facts: no
 
@@ -10,7 +10,8 @@
         state: directory
 
     - name: Run deleteS3content.py
-      win_command: cmd.exe /c "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.bat"
+      win_command: >
+        python "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
       environment:
         AWS_ACCESS_KEY: "{{ lookup('env','AWS_ACCESS_KEY') }}"
         AWS_SECRET_KEY: "{{ lookup('env','AWS_SECRET_KEY') }}"
