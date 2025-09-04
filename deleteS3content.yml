@@ -1,31 +1,43 @@
 ---
 - name: Run deleteS3content.py on Windows hosts
   hosts: all
-  gather_facts: no
+  gather_facts: yes
 
   vars:
     aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
     aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
+    log_dir: "C:\\trade_report_UA_backup\\tradeReportAppflowAutomation"
 
   tasks:
+
+    - name: Fail if AWS credentials are missing
+      ansible.builtin.fail:
+        msg: "AWS credentials are missing! Attach the correct AWX credential."
+      when: aws_access_key == "" or aws_secret_key == ""
+
     - name: Ensure script directory exists
       ansible.windows.win_file:
-        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
+        path: "{{ log_dir }}"
         state: directory
 
-    - name: Run deleteS3content.py with AWS credentials
-      win_command: >
+    - name: Set timestamp variable for log filename
+      ansible.builtin.set_fact:
+        log_file: "{{ log_dir }}\\deleteS3content_{{ ansible_date_time.iso8601_basic }}.log"
+
+    - name: Run deleteS3content.py with AWS credentials and log output
+      ansible.windows.win_command: >
+        cmd.exe /c
         "C:\Program Files\Python311\python.exe"
-        "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
-        "{{ aws_access_key }}" "{{ aws_secret_key }}"
+        "{{ log_dir }}\deleteS3content.py"
+        """{{ aws_access_key }}""" """{{ aws_secret_key }}"""
+        >> "{{ log_file }}" 2>&1
       args:
-        chdir: C:\trade_report_UA_backup\tradeReportAppflowAutomation
+        chdir: "{{ log_dir }}"
       register: script_result
       ignore_errors: yes
 
-    - name: Show script execution return code
+    - name: Show script execution status
       debug:
-        msg: "{{ script_result.rc | default('Script did not run') }}"
-
-
-
+        msg: >
+          Script finished with return code {{ script_result.rc | default('unknown') }}.
+          Log saved at {{ log_file }}
