@@ -14,7 +14,7 @@
         state: directory
 
     - name: Run deleteS3content.py with AWS credentials
-      ansible.windows.win_command: >
+      win_command: >
         "C:\Program Files\Python311\python.exe"
         "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
         "{{ aws_access_key }}" "{{ aws_secret_key }}"
