@@ -1,19 +1,23 @@
 ---
-- name: Run deleteS3content Python script via .bat
+- name: Run deleteS3content.bat and show log
   hosts: all
   gather_facts: no
 
   tasks:
-    - name: Ensure working directory exists
+    - name: Ensure tradeReportAppflowAutomation directory exists
       win_file:
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
 
-    - name: Run deleteS3content .bat script
+    - name: Run deleteS3content.bat
       win_command: cmd.exe /c "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.bat"
-      register: delete_s3_output
+      register: bat_output
       ignore_errors: yes
 
-    - name: Show deleteS3content output
+    - name: Show deleteS3content.bat stdout
       debug:
-        var: delete_s3_output.stdout_lines
+        var: bat_output.stdout_lines
+
+    - name: Show deleteS3content.bat stderr
+      debug:
+        var: bat_output.stderr_lines
