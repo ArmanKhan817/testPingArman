@@ -1,26 +1,23 @@
 ---
-- name: Run deleteS3content.py with AWS credentials from environment
+- name: Run deleteS3content.py
   hosts: all
   gather_facts: no
 
   tasks:
-    - name: Ensure working directory exists
+    - name: Ensure script directory exists
       win_file:
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
 
     - name: Run deleteS3content.py
-      win_command: cmd.exe /c "python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
+      win_command: cmd.exe /c "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.bat"
       environment:
-        AWS_ACCESS_KEY: "{{ aws_access_key }}"
-        AWS_SECRET_KEY: "{{ aws_secret_key }}"
-      register: script_output
+        AWS_ACCESS_KEY: "{{ lookup('env','AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env','AWS_SECRET_KEY') }}"
+      register: py_output
       ignore_errors: yes
 
-    - name: Show stdout
+    - name: Show script stdout
       debug:
-        var: script_output.stdout_lines
+        var: py_output.stdout_lines
 
-    - name: Show stderr
-      debug:
-        var: script_output.stderr_lines
