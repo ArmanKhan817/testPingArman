@@ -15,7 +15,7 @@
         msg: "AWS credentials are missing! Attach the correct AWX credential."
       when: aws_access_key == "" or aws_secret_key == ""
 
-    - name: Ensure script directory exists
+    - name: Ensure script/log directory exists
       ansible.windows.win_file:
         path: "{{ log_dir }}"
         state: directory
@@ -29,7 +29,7 @@
         cmd.exe /c
         "C:\Program Files\Python311\python.exe"
         "{{ log_dir }}\deleteS3content.py"
-        """{{ aws_access_key }}""" """{{ aws_secret_key }}"""
+        "{{ aws_access_key }}" "{{ aws_secret_key }}"
         >> "{{ log_file }}" 2>&1
       args:
         chdir: "{{ log_dir }}"
