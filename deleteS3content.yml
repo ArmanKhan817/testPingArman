@@ -1,21 +1,25 @@
 ---
-- name: Run deleteS3content.py on Windows hosts
+- name: Run deleteS3content.py and capture logs
   hosts: all
   gather_facts: no
-  tasks:
 
-    - name: Ensure log directory exists
-      ansible.windows.win_file:
+  tasks:
+    - name: Ensure C:\trade_report_UA_backup\tradeReportAppflowAutomation exists
+      win_file:
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
 
     - name: Run deleteS3content.py
-      ansible.windows.win_command:
-        cmd: '"python.exe" "deleteS3content.py"'
+      win_command: cmd.exe /c "\"C:\Program Files\Python311\python.exe\" \"C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py\""
+      args:
         chdir: C:\trade_report_UA_backup\tradeReportAppflowAutomation
-      register: script_result
+      register: py_output
       ignore_errors: yes
 
-    - name: Show script stdout
-      ansible.builtin.debug:
-        var: script_result.stdout_lines
+    - name: Show deleteS3content.py stdout
+      debug:
+        var: py_output.stdout_lines
+
+    - name: Show deleteS3content.py stderr
+      debug:
+        var: py_output.stderr_lines
