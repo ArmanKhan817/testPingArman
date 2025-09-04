@@ -11,7 +11,7 @@
 
     - name: Run deleteS3content.py
       win_command: cmd.exe /c "python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
-      environment:
+      env:
         AWS_ACCESS_KEY: "{{ aws_access_key }}"
         AWS_SECRET_KEY: "{{ aws_secret_key }}"
       register: script_output
