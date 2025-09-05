@@ -8,9 +8,16 @@
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
     - name: Run deleteS3content.py in virtual environment
-      win_command: cmd.exe /c "call C:\trade_report_UA_backup\venv\Scripts\activate.bat && python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
-      register: delete_s3_output
-      ignore_errors: yes
+      ansible.windows.win_command: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
+      args:
+        chdir: C:\trade_report_UA_backup
+      register: delete_result
+    - name: Show script stdout
+      ansible.builtin.debug:
+        var: delete_result.stdout
     - name: Show script stderr
-      debug:
-        var: delete_s3_output
+      ansible.builtin.debug:
+        var: delete_result.stderr
+    - name: Show return code
+      ansible.builtin.debug:
+        var: delete_result.rc
