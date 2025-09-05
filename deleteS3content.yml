@@ -8,7 +8,7 @@
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
     - name: Run deleteS3content.py in virtual environment
-      win_shell: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
+      win_command: cmd.exe /c "call C:\trade_report_UA_backup\venv\Scripts\activate.bat && python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
       register: delete_s3_output
       ignore_errors: yes
     - name: Show script stderr
