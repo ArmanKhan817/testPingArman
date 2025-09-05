@@ -9,7 +9,7 @@
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
     - name: Run deleteS3content.bat
-      win_command: cmd.exe /c "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
+      win_command: "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
       register: bat_output
       ignore_errors: yes
 
