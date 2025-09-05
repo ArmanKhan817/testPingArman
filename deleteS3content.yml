@@ -10,18 +10,14 @@
         state: directory
 
     - name: Run deleteS3content.py in virtual environment
-      win_command: >
-        cmd /c "C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
-      environment:
-        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-      register: py_output
+      ansible.builtin.shell: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
+      register: delete_s3_output
       ignore_errors: yes
 
     - name: Show script stdout
       debug:
-        var: py_output.stdout_lines
+        var: delete_s3_output.stdout_lines
 
     - name: Show script stderr
       debug:
-        var: py_output.stderr_lines
+        var: delete_s3_output.stderr_lines
