@@ -11,8 +11,8 @@
     - name: Run deleteS3content.bat
       win_command: '"C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"'
       environment:
-        AWS_ACCESS_KEY: '{{ aws_access_key }}'
-        AWS_SECRET_KEY: '{{ aws_secret_key }}'
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
       register: bat_output
       ignore_errors: yes
     - name: Show deleteS3content.bat stdout
