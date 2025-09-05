@@ -13,8 +13,8 @@
       win_command: >
         cmd /c "C:\trade_report_UA_backup\venv\Scripts\activate && python C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content.py"
       environment:
-        AWS_ACCESS_KEY: "{{ aws_access_key }}"
-        AWS_SECRET_KEY: "{{ aws_secret_key }}"
+        AWS_ACCESS_KEY: "{{ AWS_ACCESS_KEY }}"
+        AWS_SECRET_KEY: "{{ AWS_SECRET_KEY }}"
       register: py_output
       ignore_errors: yes
 
