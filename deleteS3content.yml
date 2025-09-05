@@ -2,22 +2,15 @@
 - name: Run deleteS3content.py with virtualenv and AWX credentials
   hosts: all
   gather_facts: no
-
   tasks:
     - name: Ensure script directory exists
       win_file:
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
-
     - name: Run deleteS3content.py in virtual environment
-      ansible.builtin.shell: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
+      win_command: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
       register: delete_s3_output
       ignore_errors: yes
-
-    - name: Show script stdout
-      debug:
-        var: delete_s3_output.stdout_lines
-
     - name: Show script stderr
       debug:
-        var: delete_s3_output.stderr_lines
+        var: delete_s3_output
