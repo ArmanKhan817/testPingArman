@@ -1,23 +1,22 @@
 ---
-- name: Run deleteS3content.py with virtualenv and AWX credentials
+- name: Run deleteS3content.bat and show log
   hosts: all
   gather_facts: no
+
   tasks:
-    - name: Ensure script directory exists
+    - name: Ensure tradeReportAppflowAutomation directory exists
       win_file:
         path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
         state: directory
-    - name: Run deleteS3content.py in virtual environment
-      ansible.windows.win_command: C:\trade_report_UA_backup\venv\Scripts\python.exe C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py
-      args:
-        chdir: C:\trade_report_UA_backup
-      register: delete_result
-    - name: Show script stdout
-      ansible.builtin.debug:
-        var: delete_result.stdout
-    - name: Show script stderr
-      ansible.builtin.debug:
-        var: delete_result.stderr
-    - name: Show return code
-      ansible.builtin.debug:
-        var: delete_result.rc
+    - name: Run deleteS3content.bat
+      win_command: cmd.exe /c "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3content_old.py"
+      register: bat_output
+      ignore_errors: yes
+
+    - name: Show deleteS3content.bat stdout
+      debug:
+        var: bat_output.stdout_lines
+
+    - name: Show deleteS3content.bat stderr
+      debug:
+        var: bat_output.stderr_lines
