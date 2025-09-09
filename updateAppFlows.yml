@@ -1,0 +1,25 @@
+---
+- name: Run updateFlows.py and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure tradeReportAppflowAutomation directory exists
+      win_file:
+        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation\Updatesallflows
+        state: directory
+    - name: Run updateFlows.py
+      win_shell: |
+        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\Updatesallflows\updatFlows\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\Updatesallflows\updateFlows.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: bat_output
+      ignore_errors: yes
+    - name: Show updateFlows.py stdout
+      debug:
+        var: bat_output.stdout_lines
+
+    - name: Show updateFlows.py stderr
+      debug:
+        var: bat_output.stderr_lines
