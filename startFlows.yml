@@ -1,0 +1,27 @@
+---
+- name: Run startFlows.py and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure StartFlows directory exists
+      win_file:
+        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation\StartFlows
+        state: directory
+
+    - name: Run startFlows.py
+      win_shell: |
+        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\StartFlows\startFlows.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: start_output
+      ignore_errors: yes
+
+    - name: Show startFlows.py stdout
+      debug:
+        var: start_output.stdout_lines
+
+    - name: Show startFlows.py stderr
+      debug:
+        var: start_output.stderr_lines
