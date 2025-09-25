@@ -11,7 +11,7 @@
 
     - name: Run startFlows.py
       win_shell: |
-        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\StartFlows\startFlows.py"
+        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\StartFlows\startFlows\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\StartFlows\startFlows.py"
       environment:
         AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
         AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
