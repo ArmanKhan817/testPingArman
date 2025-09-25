@@ -1,0 +1,25 @@
+---
+- name: Run createFlows.py and show log
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Ensure createFlows directory exists
+      win_file:
+        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation\createFlows
+        state: directory
+    - name: Run createFlows.py
+      win_shell: |
+        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\createFlows\createFlows.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: create_output
+      ignore_errors: yes
+
+    - name: Show createFlows.py stdout
+      debug:
+        var: create_output.stdout_lines
+
+    - name: Show createFlows.py stderr
+      debug:
+        var: create_output.stderr_lines
