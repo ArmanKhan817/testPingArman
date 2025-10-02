@@ -1,0 +1,25 @@
+---
+- hosts: all
+  gather_facts: yes
+
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+    # survey_ip should be provided via AWX extra-vars or inventory
+
+  tasks:
+
+    - name: Copy DeploySmartOmniSmartStore folder from network share to C:\ARFiles
+      win_command: |
+        robocopy "\\10.61.{{ survey_ip }}.200\ARFiles\DeploySmartOmniSmartStore" "C:\ARFiles\DeploySmartOmniSmartStore" /E /NFL /NDL /NP /R:3 /W:5
+      register: robocopy_result
+      ignore_errors: yes
+      failed_when: robocopy_result.rc not in [0,1]
+
+    - name: Show robocopy output
+      ansible.builtin.debug:
+        var: robocopy_result.stdout_lines
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
