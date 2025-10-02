@@ -1,0 +1,32 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Check DeploySmartOmniSmartStore file count
+      win_shell: |
+        $folder = "C:\ARFiles\DeploySmartOmniSmartStore"
+        if (Test-Path $folder) {
+          $fileCount = (Get-ChildItem $folder -File).Count
+        } else {
+          $fileCount = 0
+        }
+
+        if ($fileCount -eq 11) {
+          Write-Output "✅ Deployment check passed - Files: $fileCount"
+        } else {
+          Write-Output "❌ Deployment check failed - Files: $fileCount"
+        }
+      register: deploy_check
+      changed_when: false
+
+    - name: Show deployment result
+      ansible.builtin.debug:
+        var: deploy_check.stdout
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
