@@ -1,0 +1,19 @@
+---
+- name: Run monthly_report.bat and wait for output.txt in C:\Monthy_Report
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure C:\Monthy_Report
+      win_file:
+        path: C:\Monthy_Report
+        state: directory
+
+    - name: Run monthly_report_transfer.bat
+      win_command: cmd.exe /c "C:\Monthy_Report\monthly_report_transfer.bat"
+      register: bat_output
+      ignore_errors: yes
+
+    - name: Show test.bat stdout
+      debug:
+        var: bat_output.stdout_lines
