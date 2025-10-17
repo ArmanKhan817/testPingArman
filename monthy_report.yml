@@ -1,5 +1,5 @@
 ---
-- name: Run test.bat and wait for output.txt in C:\trade_report_UA_backup
+- name: Run monthly_report.bat and wait for output.txt in C:\Monthy_Report
   hosts: all
   gather_facts: no
 
