@@ -1,0 +1,27 @@
+---
+- name: Run startMonthlyAppFlows.py and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure StartFlows directory exists
+      win_file:
+        path: C:\Monthy_Report\monthyTradeReportAppFlow\startMonthlyAppFlows
+        state: directory
+
+    - name: Run startMonthlyAppFlows.py
+      win_shell: |
+        & "C:\Monthy_Report\monthyTradeReportAppFlow\startMonthlyAppFlows\startMonthlyAppFlows\Scripts\python.exe" "C:\Monthy_Report\monthyTradeReportAppFlow\startMonthlyAppFlows\startMonthlyAppFlows.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: start_output
+      ignore_errors: yes
+
+    - name: Show startMonthlyAppFlows.py stdout
+      debug:
+        var: start_output.stdout_lines
+
+    - name: Show startMonthlyAppFlows.py stderr
+      debug:
+        var: start_output.stderr_lines
