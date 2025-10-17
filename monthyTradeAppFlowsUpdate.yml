@@ -1,0 +1,25 @@
+---
+- name: Run updateMonthlyFlow.py and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure monthyTradeReportAppFlow directory exists
+      win_file:
+        path: C:\Monthy_Report\monthyTradeReportAppFlow\updateMonthlyFlow
+        state: directory
+    - name: Run updateMonthlyFlow.py
+      win_shell: |
+        & "C:\Monthy_Report\monthyTradeReportAppFlow\updateMonthlyFlow\updateMonthlyFlow\Scripts\python.exe" "C:\Monthy_Report\monthyTradeReportAppFlow\updateMonthlyFlow\updateMonthlyFlow.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: bat_output
+      ignore_errors: yes
+    - name: Show updateMonthlyFlow.py stdout
+      debug:
+        var: bat_output.stdout_lines
+
+    - name: Show updateMonthlyFlow.py stderr
+      debug:
+        var: bat_output.stderr_lines
