@@ -1,0 +1,19 @@
+---
+- name: Run test.bat and wait for output.txt in C:\trade_report_UA_backup
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure C:\trade_report_UA_backup
+      win_file:
+        path: C:\trade_report_UA_backup
+        state: directory
+
+    - name: Run test.bat
+      win_command: cmd.exe /c "C:\trade_report_UA_backup\workflow.bat"
+      register: bat_output
+      ignore_errors: yes
+
+    - name: Show test.bat stdout
+      debug:
+        var: bat_output.stdout_lines
