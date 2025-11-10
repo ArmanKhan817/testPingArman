@@ -8,7 +8,11 @@
     # survey_ip should be provided via AWX extra-vars or inventory
 
   tasks:
-
+    - name: Rename existing DeploySmartOmniSmartStore folder if it exists
+      win_shell: |
+        if (Test-Path "C:\ARFiles\DeploySmartOmniSmartStore") {
+          Rename-Item -Path "C:\ARFiles\DeploySmartOmniSmartStore" -NewName "C:\ARFiles\DeploySmartOmniSmartStore_old_11Nov" -Force
+        }
     - name: Copy DeploySmartOmniSmartStore folder from network share to C:\ARFiles
       win_command: |
         robocopy "\\10.61.{{ survey_ip }}.200\ARFiles\DeploySmartOmniSmartStore" "C:\ARFiles\DeploySmartOmniSmartStore" /E /NFL /NDL /NP /R:3 /W:5
