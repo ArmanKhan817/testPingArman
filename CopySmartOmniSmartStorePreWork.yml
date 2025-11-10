@@ -9,7 +9,7 @@
     - name: Rename existing DeploySmartOmniSmartStore folder if it exists
       win_shell: |
         if (Test-Path "C:\ARFiles\DeploySmartOmniSmartStore") {
-          Rename-Item -Path "C:\ARFiles\DeploySmartOmniSmartStore" -NewName "C:\ARFiles\DeploySmartOmniSmartStore_old_02Oct" -Force
+          Rename-Item -Path "C:\ARFiles\DeploySmartOmniSmartStore" -NewName "C:\ARFiles\DeploySmartOmniSmartStore_old_11Nov" -Force
         }
 
     - name: Copy DeploySmartOmniSmartStore folder from remote machine to local machine
