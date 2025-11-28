@@ -1,0 +1,25 @@
+---
+- name: Run deleteS3contentMonthly.bat and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure tradeReportAppflowAutomation directory exists
+      win_file:
+        path: C:\trade_report_UA_backup\tradeReportAppflowAutomation
+        state: directory
+    - name: Run deleteS3contentMonthly.bat
+      win_shell: |
+        & "C:\trade_report_UA_backup\tradeReportAppflowAutomation\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportAppflowAutomation\deleteS3contentMonthly.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: bat_output
+      ignore_errors: yes
+    - name: Show deleteS3contentMonthly.bat stdout
+      debug:
+        var: bat_output.stdout_lines
+
+    - name: Show deleteS3contentMonthly.bat stderr
+      debug:
+        var: bat_output.stderr_lines
