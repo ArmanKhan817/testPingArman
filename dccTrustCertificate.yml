@@ -12,7 +12,7 @@
     ###########################################################################
     - name: Check and update EnablePlusSubscription in configureDymocksLoyalty.ps1
       win_shell: |
-        $filePath = "C:\ARFILES\UpgradeMay2024\configureDymocksLoyalty.ps1"
+        $filePath = "C:\ARFILES\DymocksLoyaltyUpgrade\configureDymocksLoyalty.ps1"
 
         if (Test-Path $filePath) {
           $content = Get-Content $filePath
@@ -45,7 +45,7 @@
     ###########################################################################
     - name: Check and update StorePluginConfig.sql values
       win_shell: |
-        $filePath = "C:\ARFILES\UpgradeMay2024\Scripts\Loyalty\StorePluginConfig.sql"
+        $filePath = "C:\ARFILES\DymocksLoyaltyUpgrade\Scripts\Loyalty\StorePluginConfig.sql"
         $changes = @()
 
         if (Test-Path $filePath) {
@@ -88,7 +88,7 @@
     ###########################################################################
     - name: Add -TrustServerCertificate to Invoke-Sqlcmd in configureDymocksLoyalty.ps1
       win_shell: |
-        $filePath = "C:\ARFILES\UpgradeMay2024\configureDymocksLoyalty.ps1"
+        $filePath = "C:\ARFILES\DymocksLoyaltyUpgrade\configureDymocksLoyalty.ps1"
 
         if (Test-Path $filePath) {
           $content = Get-Content $filePath -Raw
