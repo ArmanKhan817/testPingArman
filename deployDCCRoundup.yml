@@ -22,7 +22,7 @@
 
     - name: Run configureDymocksLoyalty.ps1
       win_shell: |
-        $scriptPath = "C:\ARFILES\UpgradeMay2024\configureDymocksLoyalty.ps1"
+        $scriptPath = "C:\ARFILES\DymocksLoyaltyUpgrade\configureDymocksLoyalty.ps1"
         if (Test-Path $scriptPath) {
           Write-Output "▶️ Running script: $scriptPath"
           & $scriptPath
