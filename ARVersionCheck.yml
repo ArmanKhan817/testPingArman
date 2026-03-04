@@ -1,0 +1,42 @@
+
+- hosts: all
+  gather_facts: yes
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+  tasks:
+    - name: Run VersionReport script (PowerShell)
+      ansible.windows.win_powershell:
+        script: |
+          $scriptPath = 'C:\ARFILES\VersionReport\versionReport V1.0.ps1'
+          if (Test-Path $scriptPath) {
+            Write-Output "Running script: $scriptPath"
+            & $scriptPath
+            $exitCode = $LASTEXITCODE
+            Write-Output "Script exit code: $exitCode"
+            if ($exitCode -ne 0) {
+              Write-Error "Script returned non-zero exit code: $exitCode"
+            }
+          } else {
+            Write-Error "Script not found: $scriptPath"
+          }
+      register: run_script_result
+      # Mark changed only if script ran successfully (tweak substring if needed)
+      changed_when: >
+        ('Running script:' in run_script_result.stdout) and
+        ('Script exit code: 0' in run_script_result.stdout)
+      failed_when: >
+        ('Script not found' in run_script_result.stderr) or
+        ('non-zero exit code' in run_script_result.stderr)
+
+    - name: Show script stdout in AWX
+      ansible.builtin.debug:
+        var: run_script_result.stdout
+
+    - name: Show script stderr in AWX (if any)
+      ansible.builtin.debug:
+        var: run_script_result.stderr
+      when: run_script_result.stderr | length > 0
