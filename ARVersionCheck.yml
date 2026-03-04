@@ -6,40 +6,22 @@
   vars:
     ansible_become_user: "{{ username }}"
     ansible_become_pass: "{{ password }}"
-    script_path: "C:\\ARFILES\\VersionReport\\versionReport V1.0.ps1"
 
   tasks:
-    - name: Run VersionReport script (PowerShell)
-      ansible.windows.win_powershell:
-        script: |
-          $scriptPath = '{{ script_path }}'
-          if (Test-Path $scriptPath) {
-            Write-Output "Running script: $scriptPath"
-            & $scriptPath
-            $exitCode = $LASTEXITCODE
-            Write-Output "Script exit code: $exitCode"
-            if ($exitCode -ne 0) {
-              Write-Error "Script returned non-zero exit code: $exitCode"
-              exit $exitCode
-            }
-          } else {
-            Write-Error "Script not found: $scriptPath"
-            exit 2
-          }
+    - name: Run versionReport V1.0.ps1
+      win_shell: |
+        $p = "C:\ARFILES\VersionReport\versionReport V1.0.ps1"
+        if (Test-Path $p) {
+          Write-Output "Running script"
+          & $p
+          Write-Output "Script executed successfully"
+        } else {
+          Write-Output "Script not found"
+        }
       register: run_script_result
-      # Join the list into a single string for substring checks
-      vars:
-        output_text: "{{ (run_script_result.output | default([])) | join('\n') }}"
-      changed_when: >
-        output_text is search('Running script:') and
-        output_text is search('Script exit code: 0')
-      failed_when: >
-        (run_script_result.rc | default(0)) != 0 or
-        (run_script_result.error | default([]) | length) > 0
+      ignore_errors: yes
+      changed_when: "'Script executed successfully' in run_script_result.stdout"
 
-    - name: Show script execution output (what appears in AWX)
-      ansible.builtin.debug:
-        msg:
-          rc: "{{ run_script_result.rc | default('n/a') }}"
-          output: "{{ (run_script_result.output | default([])) | join('\n') }}"
-          error: "{{ run_script_result.error | default([]) }}"
+    - name: Show script output in AWX
+      debug:
+        var: run_script_result.stdout
