@@ -9,13 +9,23 @@
           [PSCustomObject]@{ Hostname = $hostname; OS = $os }
       register: host_result
 
-    - name: Add result to aggregate list
+    - name: Save result as host fact
       set_fact:
-        report_list: "{{ report_list | default([]) + host_result.output }}"
+        host_report: "{{ host_result.output }}"
 
 - hosts: localhost
   gather_facts: no
   tasks:
+    - name: Aggregate host reports
+      set_fact:
+        report_list: >-
+          {{
+            groups['all'] 
+            | map('extract', hostvars, 'host_report') 
+            | select('defined') 
+            | list
+          }}
+
     - name: Generate report
       template:
         src: report.j2
