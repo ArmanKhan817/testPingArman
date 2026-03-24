@@ -1,5 +1,13 @@
 - hosts: all
   gather_facts: yes
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
   tasks:
     - name: Run inline version report
       ansible.windows.win_powershell:
@@ -9,26 +17,13 @@
           [PSCustomObject]@{ Hostname = $hostname; OS = $os }
       register: host_result
 
-    - name: Save result as host fact
+    - name: Save host result as fact
       set_fact:
         host_report: "{{ host_result.output }}"
 
-- hosts: all
-  gather_facts: no
-  tasks:
-    - name: Aggregate host reports
-      set_fact:
-        report_list: >-
-          {{
-            groups['all'] 
-            | map('extract', hostvars, 'host_report') 
-            | select('defined') 
-            | list
-          }}
-
-    - name: Generate report
+    - name: Generate report on the host
       template:
         src: report.j2
         dest: C:\ARFILES\windows_report.txt
       vars:
-        all_hosts_data: "{{ report_list }}"
+        all_hosts_data: "{{ host_report }}"
