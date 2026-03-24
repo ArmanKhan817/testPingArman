@@ -13,7 +13,7 @@
       set_fact:
         host_report: "{{ host_result.output }}"
 
-- hosts: localhost
+- hosts: all
   gather_facts: no
   tasks:
     - name: Aggregate host reports
