@@ -1,0 +1,31 @@
+- hosts: all
+  gather_facts: yes
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Run inline version report
+      ansible.windows.win_powershell:
+        script: |
+          Write-Output "Running inline script"
+
+          $hostname = $env:COMPUTERNAME
+          $os = (Get-CimInstance Win32_OperatingSystem).Caption
+
+          [PSCustomObject]@{
+            Hostname = $hostname
+            OS = $os
+          }
+
+          Write-Output "Script executed successfully"
+      register: run_script_result
+      ignore_errors: yes
+
+    - name: Show script output in AWX
+      debug:
+        var: run_script_result.output
