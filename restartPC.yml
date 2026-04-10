@@ -11,10 +11,16 @@
 
   tasks:
 
-    - name: Stop POS process if running
+    - name: Stop POS process safely
       ansible.windows.win_shell: |
-        Get-Process -Name "POS" -ErrorAction SilentlyContinue | Stop-Process -Force
+        if (Get-Process -Name "POS" -ErrorAction SilentlyContinue) {
+          Stop-Process -Name "POS" -Force
+          Write-Output "POS was running and has been stopped"
+        }
+        else {
+          Write-Output "POS is not running"
+        }
 
-    - name: Confirm POS status
+    - name: Show result
       ansible.builtin.debug:
-        msg: "POS process stop attempted (if it was running)"
+        msg: "POS check/stop completed successfully"
