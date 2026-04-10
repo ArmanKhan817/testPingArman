@@ -1,0 +1,20 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: '{{ username }}'
+    ansible_become_pass: '{{ password }}'
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  tasks:
+
+    - name: Stop POS process if running
+      ansible.windows.win_process:
+        name: POS
+        state: absent
+
+    - name: Show confirmation
+      ansible.builtin.debug:
+        msg: "POS process stopped (if it was running)"
