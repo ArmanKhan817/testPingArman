@@ -1,1 +1,20 @@
-- hosts: all gather_facts: yes vars: ansible_become_user: '{{ username }}' ansible_become_pass: '{{ password }}' tasks: - name: Check if POS process is running win_shell: | try { Get-Process -Name 'POS' -ErrorAction Stop | Out-Null Write-Output "POS process is running" } catch { Write-Output "POS process not found" } register: pos_process ignore_errors: yes - name: Stop POS process if running win_shell: Stop-Process -Name 'POS' -Force -Confirm:$false when: "'POS process is running' in pos_process.stdout" - name: Show script execution output ansible.builtin.debug: var: run_script_result.stdout become: yes become_method: runas become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+- hosts: all
+  gather_facts: yes
+
+  vars:
+    ansible_become_user: '{{ username }}'
+    ansible_become_pass: '{{ password }}'
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  tasks:
+
+    - name: Stop POS process if running
+      ansible.windows.win_shell: |
+        Get-Process -Name "POS" -ErrorAction SilentlyContinue | Stop-Process -Force
+
+    - name: Confirm POS status
+      ansible.builtin.debug:
+        msg: "POS process stop attempted (if it was running)"
