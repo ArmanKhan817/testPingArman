@@ -1,0 +1,25 @@
+---
+- name: Run updateExtendedAppFlows.py and show log
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Ensure tradeReportAppflowAutomation directory exists
+      win_file:
+        path: C:\trade_report_UA_backup\tradeReportExtended\updateAppFlows
+        state: directory
+    - name: Run updateExtendedAppFlows.py
+      win_shell: |
+        & "C:\trade_report_UA_backup\tradeReportExtended\updateAppFlows\venv\Scripts\python.exe" "C:\trade_report_UA_backup\tradeReportExtended\updateAppFlows\updateExtendedAppFlows.py"
+      environment:
+        AWS_ACCESS_KEY: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+        AWS_SECRET_KEY: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+      register: bat_output
+      ignore_errors: yes
+    - name: Show updateExtendedAppFlows.py stdout
+      debug:
+        var: bat_output.stdout_lines
+
+    - name: Show updateExtendedAppFlows.py stderr
+      debug:
+        var: bat_output.stderr_lines
