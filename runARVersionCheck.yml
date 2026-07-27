@@ -1,0 +1,29 @@
+- hosts: all
+  gather_facts: yes
+  vars:
+    ansible_become_user: "{{ username }}"
+    ansible_become_pass: "{{ password }}"
+
+  tasks:
+    - name: Run versionReport.ps1
+      win_shell: |
+        $scriptPath = "C:\ARFiles\VersionReport\versionReport.ps1"
+        if (Test-Path $scriptPath) {
+          Write-Output "Running script: $scriptPath"
+          & $scriptPath
+          Write-Output "Script executed successfully: $scriptPath"
+        } else {
+          Write-Output "Script not found: $scriptPath"
+          exit 1
+        }
+      register: version_report_result
+      ignore_errors: yes
+      changed_when: "'Script executed successfully' in version_report_result.stdout"
+
+    - name: Show script output
+      ansible.builtin.debug:
+        var: version_report_result.stdout
+
+  become: yes
+  become_method: runas
+  become_flags: logon_type=new_credentials logon_flags=netcredentials_only
