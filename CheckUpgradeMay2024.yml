@@ -5,27 +5,27 @@
     ansible_become_pass: "{{ password }}"
 
   tasks:
-    - name: Check if UpgradeMay2024 folder exists
+    - name: Check if DymocksLoyaltyUpgrade folder exists
       win_shell: |
-        $folder = "C:\ARFILES\UpgradeMay2024"
+        $folder = "C:\ARFILES\DymocksLoyaltyUpgrade"
         $hostname = $env:COMPUTERNAME
         $ipAddress = (Get-NetIPAddress -AddressFamily IPv4 |
           Where-Object {$_.InterfaceAlias -notmatch "Loopback"} |
           Select-Object -First 1).IPAddress
 
         if (Test-Path -Path $folder -PathType Container) {
-          Write-Output "✅ SUCCESS: UpgradeMay2024 Folder Exists on $hostname (IP: $ipAddress)"
+          Write-Output "✅ SUCCESS: DymocksLoyaltyUpgrade Folder Exists on $hostname (IP: $ipAddress)"
         } else {
-          Write-Output "❌ ERROR: UpgradeMay2024 Folder Not Found in C:\ARFILES on $hostname (IP: $ipAddress). Please create or copy the folder."
+          Write-Output "❌ ERROR: DymocksLoyaltyUpgrade Folder Not Found in C:\ARFILES on $hostname (IP: $ipAddress). Please create or copy the folder."
         }
-      register: upgradeMay2024_folder_status
+      register: DymocksLoyaltyUpgrade_folder_status
       ignore_errors: yes
       changed_when: false
 
     - name: Show folder existence status
       ansible.builtin.debug:
-        var: upgradeMay2024_folder_status.stdout
-      when: upgradeMay2024_folder_status.stdout is defined
+        var: DymocksLoyaltyUpgrade_folder_status.stdout
+      when: DymocksLoyaltyUpgrade_folder_status.stdout is defined
 
   become: yes
   become_method: runas
